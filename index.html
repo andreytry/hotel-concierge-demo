@@ -2,195 +2,156 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Hostal Nicolás de Ovando — Direct Booking Concierge</title>
-<meta name="description" content="24/7 AI concierge for a boutique hotel in Santo Domingo's Zona Colonial. Ask anything, or book direct." />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+<title>Ocean Breeze Studios — Concierge</title>
+<meta name="description" content="24/7 concierge for Ocean Breeze Studios, Zona Colonial, Santo Domingo. Chat or talk — ask anything, book direct." />
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap');
   :root{
-    --jade-deep:#123c37;--jade:#1f6f63;--jade-soft:#2b8b7c;--limestone:#fbf4e6;--limestone-2:#f1e6cf;
-    --mahogany:#2a1a12;--gold:#c8862a;--gold-bright:#e6a23c;--turq:#2bb6a3;--ink:#33271f;--muted:#7c6f60;
-    --line:rgba(42,26,18,.12);--shadow:0 18px 50px -20px rgba(18,60,55,.55);
+    --ocean:#0e6b73; --ocean-deep:#094a50; --foam:#43bdb8; --sand:#f7f0e3; --sand-2:#efe5d2;
+    --coral:#e8745b; --ink:#243032; --muted:#6f7d7e; --line:rgba(36,48,50,.12);
+    --me:#0e6b73; --bot:#ffffff; --gold:#cf9233;
   }
-  *{box-sizing:border-box}html,body{margin:0;height:100%}
-  body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);min-height:100%;padding:clamp(14px,3vw,40px);
-    background:radial-gradient(120% 80% at 80% -10%,rgba(43,182,163,.18),transparent 55%),radial-gradient(100% 90% at 0% 110%,rgba(200,134,42,.16),transparent 50%),linear-gradient(160deg,#0f332f 0%,#123c37 40%,#0c2a27 100%);}
-  .wrap{max-width:1180px;margin:0 auto}
-  header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:22px}
-  .brandline{display:flex;align-items:center;gap:12px;color:#cfe9e2;font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
-  .brandline .dot{width:8px;height:8px;border-radius:50%;background:var(--turq);box-shadow:0 0 0 4px rgba(43,182,163,.25);animation:pulse 2.4s infinite}
-  @keyframes pulse{50%{box-shadow:0 0 0 9px rgba(43,182,163,0)}}
-  h1{font-family:'Fraunces',serif;font-weight:600;color:#fff;font-size:clamp(26px,4.4vw,46px);line-height:1.02;margin:8px 0 0;letter-spacing:-.01em}
-  h1 em{font-style:italic;color:var(--gold-bright)}
-  .sub{color:#a9c6bf;max-width:50ch;margin-top:10px;font-size:14.5px;line-height:1.5}
-  .grid{display:grid;grid-template-columns:1.45fr .95fr;gap:20px;align-items:start}
-  @media (max-width:860px){.grid{grid-template-columns:1fr}}
-  .phone{background:var(--limestone);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;min-height:560px}
-  .phead{background:linear-gradient(180deg,var(--jade),var(--jade-deep));color:#fff;padding:16px 18px;display:flex;align-items:center;gap:13px}
-  .avatar{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#3ea18f,#10463f);display:grid;place-items:center;font-family:'Fraunces',serif;font-weight:600;font-size:19px;color:#eafff8;flex:none;border:1.5px solid rgba(255,255,255,.25)}
-  .pmeta{flex:1;min-width:0}.pmeta .name{font-family:'Fraunces',serif;font-weight:600;font-size:16.5px;line-height:1.15}
-  .pmeta .status{font-size:11.5px;color:#bfe6dc;display:flex;align-items:center;gap:6px;margin-top:2px}
-  .pmeta .status::before{content:"";width:7px;height:7px;border-radius:50%;background:#7ff0d2}
-  .langtoggle{display:flex;background:rgba(0,0,0,.22);border-radius:999px;padding:3px}
-  .langtoggle button{border:0;background:transparent;color:#bfe6dc;font-weight:600;font-size:12px;padding:5px 11px;border-radius:999px;cursor:pointer;font-family:inherit}
-  .langtoggle button.on{background:var(--gold);color:#2a1a12}
-  .stream{flex:1;overflow-y:auto;padding:18px 16px 8px;background:linear-gradient(var(--limestone),var(--limestone)),repeating-linear-gradient(135deg,rgba(42,26,18,.025) 0 2px,transparent 2px 9px);display:flex;flex-direction:column;gap:10px}
-  .row{display:flex}.row.me{justify-content:flex-end}
-  .bubble{max-width:80%;padding:10px 13px;border-radius:16px;font-size:14.5px;line-height:1.45;box-shadow:0 1px 1px rgba(42,26,18,.08);white-space:pre-wrap;word-wrap:break-word}
-  .bot .bubble{background:#fff;color:var(--mahogany);border-bottom-left-radius:5px}
-  .me .bubble{background:var(--jade);color:#fff;border-bottom-right-radius:5px}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%;overscroll-behavior:none}
+  body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);background:linear-gradient(170deg,#0c4248,#0e6b73 60%,#0a3a40)}
+  .app{display:flex;flex-direction:column;height:100dvh;max-width:560px;margin:0 auto;background:var(--sand);position:relative;overflow:hidden}
+  @media(min-width:600px){.app{border-left:1px solid rgba(0,0,0,.12);border-right:1px solid rgba(0,0,0,.12);box-shadow:0 0 60px rgba(0,0,0,.35)}}
+  .hdr{flex:none;background:linear-gradient(180deg,var(--ocean),var(--ocean-deep));color:#fff;padding:calc(env(safe-area-inset-top) + 12px) 14px 12px;display:flex;align-items:center;gap:11px}
+  .logo{width:42px;height:42px;border-radius:13px;background:radial-gradient(circle at 30% 25%,#5fd0cb,#0a4d53);display:grid;place-items:center;flex:none;border:1.5px solid rgba(255,255,255,.25);font-size:20px}
+  .htext{flex:1;min-width:0}
+  .htext .name{font-family:'Fraunces',serif;font-weight:600;font-size:17px;line-height:1.1}
+  .htext .sub{font-size:11.5px;color:#bfe9e4;display:flex;align-items:center;gap:6px;margin-top:2px}
+  .htext .sub::before{content:"";width:7px;height:7px;border-radius:50%;background:#7ff0d2;box-shadow:0 0 0 3px rgba(127,240,210,.3)}
+  .lang{display:flex;background:rgba(0,0,0,.22);border-radius:999px;padding:3px;flex:none}
+  .lang button{border:0;background:transparent;color:#bfe9e4;font-weight:600;font-size:12px;padding:5px 10px;border-radius:999px;font-family:inherit}
+  .lang button.on{background:#fff;color:var(--ocean-deep)}
+  .savedbar{flex:none;background:var(--ocean-deep);color:#eafffb;font-size:12px;padding:7px 14px;display:none;align-items:center;justify-content:space-between;gap:8px}
+  .savedbar.show{display:flex}
+  .savedbar b{color:#ffd98a;font-weight:700}
+  .stream{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 13px 8px;display:flex;flex-direction:column;gap:9px;background:radial-gradient(120% 60% at 50% 0%,rgba(67,189,184,.10),transparent 60%),var(--sand)}
+  .row{display:flex;max-width:100%}
+  .row.me{justify-content:flex-end}
+  .bubble{max-width:84%;padding:10px 13px;border-radius:17px;font-size:15px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word;box-shadow:0 1px 1.5px rgba(36,48,50,.08)}
+  .bot .bubble{background:var(--bot);color:var(--ink);border-bottom-left-radius:5px}
+  .me .bubble{background:var(--me);color:#fff;border-bottom-right-radius:5px}
   .typing .bubble{color:var(--muted);font-style:italic}
-  .chips{display:flex;flex-wrap:wrap;gap:7px;padding:6px 16px 12px}
-  .chip{border:1px solid var(--line);background:rgba(255,255,255,.7);color:var(--jade-deep);font-size:12.5px;font-weight:600;padding:7px 12px;border-radius:999px;cursor:pointer;font-family:inherit;transition:.15s}
-  .chip:hover{background:#fff;border-color:var(--jade-soft);transform:translateY(-1px)}
-  .composer{display:flex;gap:9px;padding:12px;background:var(--limestone-2);border-top:1px solid var(--line)}
-  .composer input{flex:1;border:1px solid var(--line);border-radius:999px;padding:12px 16px;font-size:14.5px;font-family:inherit;background:#fff;color:var(--ink);outline:none}
-  .composer input:focus{border-color:var(--jade-soft);box-shadow:0 0 0 3px rgba(43,139,124,.18)}
-  .send{border:0;background:var(--jade);color:#fff;width:46px;height:46px;border-radius:50%;cursor:pointer;flex:none;display:grid;place-items:center;transition:.15s}
-  .send:hover{background:var(--jade-deep)}.send:disabled{opacity:.5;cursor:default}
-  .engine{display:flex;flex-direction:column;gap:16px;position:sticky;top:20px}
-  .card{background:rgba(251,244,230,.97);border-radius:18px;padding:18px;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.06)}
-  .card h3{margin:0 0 3px;font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:var(--mahogany)}
-  .card .lead{font-size:12px;color:var(--muted);margin:0 0 14px}
-  .eyebrow{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--gold)}
-  .tally{background:linear-gradient(155deg,#173f3a,#0e302c);color:#fff;border:0}.tally h3{color:#eafff8}
-  .bignum{font-family:'Fraunces',serif;font-weight:600;font-size:40px;line-height:1;color:var(--gold-bright);margin:6px 0 2px;font-variant-numeric:tabular-nums}
-  .bignum .cur{font-size:20px;color:#cfe9e2;margin-right:3px;vertical-align:super}
-  .tally .note{font-size:12px;color:#a9c6bf;line-height:1.4}
-  .meters{display:flex;gap:10px;margin-top:14px}.meter{flex:1;background:rgba(255,255,255,.07);border-radius:11px;padding:10px}
-  .meter .k{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#9dc0b8}
-  .meter .v{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:17px;color:#fff;margin-top:3px}
-  .signal{display:flex;align-items:center;gap:9px;font-size:12.5px;padding:7px 0;border-bottom:1px dashed var(--line)}.signal:last-child{border-bottom:0}
-  .pill{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px;text-transform:uppercase;background:#e7f3ef;color:#1f6f63}
-  .pill.booking{background:#fbecd4;color:#a86412}.pill.handoff{background:#f3e2e2;color:#9a4040}
-  .signal .txt{color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .booking-card{border:1.5px solid var(--gold);background:linear-gradient(180deg,#fff,#fdf6e7);border-radius:14px;padding:14px;margin-top:4px;animation:pop .4s ease}
+  .bubble strong{font-weight:700}
+  .bcard{align-self:flex-start;max-width:88%;border:1.5px solid var(--gold);background:linear-gradient(180deg,#fff,#fdf6e7);border-radius:15px;padding:13px;box-shadow:0 4px 14px rgba(207,146,51,.18);animation:pop .35s ease}
   @keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
-  .booking-card .bh{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
-  .booking-card .bh .t{font-family:'Fraunces',serif;font-weight:600;font-size:14px;color:var(--mahogany)}
-  .booking-card .bh .tag{font-size:10px;font-weight:700;letter-spacing:.1em;color:#fff;background:var(--jade);padding:3px 8px;border-radius:6px}
-  .brow{display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0}.brow .l{color:var(--muted)}
-  .brow.total{border-top:1px solid var(--line);margin-top:6px;padding-top:7px;font-weight:700}
-  .brow.total .v{font-family:'JetBrains Mono',monospace;color:var(--jade-deep)}
-  .saved{margin-top:9px;background:#173f3a;color:#eafff8;border-radius:9px;padding:8px 11px;font-size:12px;display:flex;justify-content:space-between;align-items:center}
-  .saved b{font-family:'JetBrains Mono',monospace;color:var(--gold-bright);font-size:14px}
-  .config{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1.7}.config .b{color:var(--jade-deep);font-weight:700}
-  .empty{font-size:12.5px;color:var(--muted);font-style:italic;padding:6px 0}
-  .foot{color:#7fa39b;font-size:11.5px;text-align:center;margin-top:22px;line-height:1.7}
-  .foot code{font-family:'JetBrains Mono',monospace;color:#bfe6dc;background:rgba(0,0,0,.2);padding:1px 6px;border-radius:5px}
+  .bcard .t{font-family:'Fraunces',serif;font-weight:600;font-size:14.5px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .bcard .tag{font-size:9.5px;font-weight:700;letter-spacing:.1em;color:#fff;background:var(--ocean);padding:3px 7px;border-radius:6px}
+  .brow{display:flex;justify-content:space-between;font-size:12.5px;padding:2px 0}
+  .brow .l{color:var(--muted)}
+  .brow.tot{border-top:1px solid var(--line);margin-top:5px;padding-top:6px;font-weight:700}
+  .saved2{margin-top:8px;background:var(--ocean-deep);color:#eafffb;border-radius:8px;padding:7px 10px;font-size:11.5px;display:flex;justify-content:space-between;align-items:center}
+  .saved2 b{color:#ffd98a}
+  .chips{flex:none;display:flex;gap:7px;padding:8px 12px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:none;border:1px solid var(--line);background:#fff;color:var(--ocean-deep);font-size:12.5px;font-weight:600;padding:8px 13px;border-radius:999px;font-family:inherit;white-space:nowrap}
+  .chip:active{background:var(--sand-2)}
+  .composer{flex:none;display:flex;gap:8px;align-items:center;padding:9px 11px calc(env(safe-area-inset-bottom) + 9px);background:var(--sand-2);border-top:1px solid var(--line)}
+  .composer input{flex:1;border:1px solid var(--line);border-radius:999px;padding:13px 16px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);outline:none;min-width:0}
+  .composer input:focus{border-color:var(--foam)}
+  .send{flex:none;border:0;background:var(--ocean);color:#fff;width:48px;height:48px;border-radius:50%;display:grid;place-items:center}
+  .send:active{background:var(--ocean-deep)}
+  .send:disabled{opacity:.5}
+  .vhint{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:40;display:flex;justify-content:center;pointer-events:none}
+  .vhint span{background:rgba(9,74,80,.92);color:#d8fffb;font-size:11px;padding:5px 11px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+  a{color:var(--ocean)}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
-    <div>
-      <div class="brandline"><span class="dot"></span>Direct Booking Concierge · Live POC</div>
-      <h1>The front desk that never sleeps —<br>and never pays <em>commission.</em></h1>
-      <p class="sub">A live 24/7 concierge for Hostal Nicolás de Ovando, a boutique hotel in Santo Domingo's Zona Colonial. Ask about parking, breakfast or the rooms — in English or Spanish — or book a room and watch the revenue engine recover what Booking.com would have taken.</p>
+<div class="app">
+  <div class="hdr">
+    <div class="logo">🌊</div>
+    <div class="htext">
+      <div class="name">Ocean Breeze Studios</div>
+      <div class="sub">Zona Colonial · online 24/7 · ES/EN</div>
     </div>
-  </header>
-
-  <div class="grid">
-    <section class="phone">
-      <div class="phead">
-        <div class="avatar">N</div>
-        <div class="pmeta">
-          <div class="name">Hostal Nicolás de Ovando</div>
-          <div class="status">Online · replies instantly · ES / EN</div>
-        </div>
-        <div class="langtoggle">
-          <button id="lang-es" onclick="setLang('es')">ES</button>
-          <button id="lang-en" class="on" onclick="setLang('en')">EN</button>
-        </div>
-      </div>
-      <div class="stream" id="stream"></div>
-      <div class="chips" id="chips"></div>
-      <div class="composer">
-        <input id="input" autocomplete="off" placeholder="Type a message…" onkeydown="if(event.key==='Enter')send()" />
-        <button class="send" id="sendBtn" onclick="send()" aria-label="Send">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3.4 20.6 21 12 3.4 3.4l.0 6.9L15 12l-11.6 1.7z" fill="currentColor"/></svg>
-        </button>
-      </div>
-    </section>
-
-    <aside class="engine">
-      <div class="card tally">
-        <h3>Revenue engine</h3>
-        <div class="eyebrow" style="color:#9dc0b8">Direct revenue captured this session</div>
-        <div class="bignum"><span class="cur">$</span><span id="capTotal">0</span></div>
-        <div class="note" id="tallyNote">Nothing booked yet. Try: “I want a room for 2 nights in March.”</div>
-        <div class="meters">
-          <div class="meter"><div class="k">Commission saved</div><div class="v" id="commSaved">$0</div></div>
-          <div class="meter"><div class="k">Bookings</div><div class="v" id="bkCount">0</div></div>
-        </div>
-      </div>
-      <div class="card">
-        <h3>Live intent</h3>
-        <p class="lead">Every guest turn, classified by the workflow.</p>
-        <div id="signals"><div class="empty">Waiting for the first message…</div></div>
-      </div>
-      <div class="card">
-        <h3>Captured bookings</h3>
-        <p class="lead">Written to <span style="font-family:'JetBrains Mono',monospace;font-size:11px">concierge_bookings</span> in Supabase as <b>pending</b>; front desk pinged.</p>
-        <div id="bookings"><div class="empty">No direct bookings yet.</div></div>
-      </div>
-      <div class="card">
-        <h3>Tenant config</h3>
-        <div class="config">
-          <div><span class="b">tenant</span> hotel_zona_colonial_01</div>
-          <div><span class="b">rooms</span> Queen $48 · Suite $72 · Family $95</div>
-          <div><span class="b">book_direct</span> 12% perk discount</div>
-          <div><span class="b">ota_commission</span> ~20% (the bleed)</div>
-        </div>
-      </div>
-    </aside>
+    <div class="lang">
+      <button id="les" onclick="setLang('es')">ES</button>
+      <button id="len" class="on" onclick="setLang('en')">EN</button>
+    </div>
   </div>
-
-  <p class="foot">
-    Live chain: this page → <code>n8n</code> webhook → Supabase tenant lookup → GPT-4o → reply + booking capture + front-desk notify.<br>
-    Workflow <code>iTt8wDnZn2MR7KRI</code> · Supabase <code>concierge_*</code> tables · the same stack as HVAC BOC.
-  </p>
+  <div class="savedbar" id="savedbar"><span>Booked direct this session</span><b id="savedval">$0 kept off OTA</b></div>
+  <div class="stream" id="stream"></div>
+  <div class="chips" id="chips"></div>
+  <div class="composer">
+    <input id="input" autocomplete="off" enterkeyhint="send" placeholder="Type a message…" />
+    <button class="send" id="sendBtn" aria-label="Send">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none"><path d="M3.4 20.6 21 12 3.4 3.4l0 6.9L15 12 3.4 13.7z" fill="currentColor"/></svg>
+    </button>
+  </div>
 </div>
+<div class="vhint"><span id="vhintTxt">🎙 Tap the mic to talk (voice demo)</span></div>
+
+<elevenlabs-convai agent-id="agent_0301kstp9w36en2rs3bsyamg4p1f"></elevenlabs-convai>
+<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
 
 <script>
-const WEBHOOK = "https://ai-process.app.n8n.cloud/webhook/concierge";
-const HOTEL_WHATSAPP = "+18095550142";
-const GUEST_ID = "web-" + Math.random().toString(36).slice(2,10);
-const TENANT = { rooms:[{type:"Standard Queen",rate:48},{type:"Colonial Suite",rate:72},{type:"Family Room",rate:95}], discount:12, ota:20 };
-
-let lang='en', captured=0, commission=0, bookings=0;
+const WEBHOOK="https://ai-process.app.n8n.cloud/webhook/concierge";
+const HOTEL_WA="+18096850193";
+const GUEST="web-"+Math.random().toString(36).slice(2,9);
+const ROOMS=[{type:"Basic Studio",rate:39},{type:"Deluxe Studio",rate:45},{type:"Luxe Studio",rate:49}];
+const DISCOUNT=10, OTA=15;
+let lang="en", saved=0;
 const seen=new Set();
-const GREET={en:"Hi! 👋 I'm the front desk at Hostal Nicolás de Ovando in the Zona Colonial. Ask me anything — parking, breakfast, the rooms — or tell me your dates and I'll book you in.",es:"¡Hola! 👋 Soy la recepción del Hostal Nicolás de Ovando en la Zona Colonial. Pregúntame lo que quieras —parqueo, desayuno, las habitaciones— o dime tus fechas y te reservo."};
-const CHIPS={en:["Is there parking?","Do you have a pool?","I want to book 2 nights in March","Can I bring my dog?"],es:["¿Hay parqueo?","¿Tienen piscina?","Quiero reservar 2 noches en marzo","¿Puedo llevar mi perro?"]};
-
-const stream=document.getElementById('stream'),chipsEl=document.getElementById('chips'),input=document.getElementById('input');
-function setLang(l){lang=l;document.getElementById('lang-es').classList.toggle('on',l==='es');document.getElementById('lang-en').classList.toggle('on',l==='en');input.placeholder=l==='es'?"Escribe un mensaje…":"Type a message…";renderChips();}
+const GREET={
+  en:"Hi! 👋 Welcome to Ocean Breeze Studios in the Zona Colonial. Ask me anything — rooms, prices, parking, where we are — or tell me your dates and I'll book you in. You can also tap the mic to talk.",
+  es:"¡Hola! 👋 Bienvenido a Ocean Breeze Studios en la Zona Colonial. Pregúntame lo que quieras —habitaciones, precios, parqueo, ubicación— o dime tus fechas y te reservo. También puedes tocar el micrófono para hablar."
+};
+const CHIPS={
+  en:["Room types & prices","Is there parking?","Where are you located?","Book a Deluxe, 2 nights"],
+  es:["Tipos y precios","¿Hay parqueo?","¿Dónde están ubicados?","Reservar Deluxe, 2 noches"]
+};
+const stream=document.getElementById('stream'), chipsEl=document.getElementById('chips'), input=document.getElementById('input');
+function setLang(l){lang=l;document.getElementById('les').classList.toggle('on',l==='es');document.getElementById('len').classList.toggle('on',l==='en');
+  input.placeholder=l==='es'?"Escribe un mensaje…":"Type a message…";
+  document.getElementById('vhintTxt').textContent=l==='es'?"🎙 Toca el micrófono para hablar (voz demo)":"🎙 Tap the mic to talk (voice demo)";
+  renderChips();}
 function renderChips(){chipsEl.innerHTML='';CHIPS[lang].forEach(c=>{const b=document.createElement('button');b.className='chip';b.textContent=c;b.onclick=()=>{input.value=c;send();};chipsEl.appendChild(b);});}
-function addBubble(role,text){const row=document.createElement('div');row.className='row '+(role==='me'?'me':'bot');const b=document.createElement('div');b.className='bubble';b.textContent=text;row.appendChild(b);stream.appendChild(row);stream.scrollTop=stream.scrollHeight;return row;}
-function intentClass(i){i=(i||'').toLowerCase();if(i.includes('book'))return'booking';if(i.includes('hand'))return'handoff';return'';}
-function addSignal(intent,text){const box=document.getElementById('signals');if(box.querySelector('.empty'))box.innerHTML='';const s=document.createElement('div');s.className='signal';s.innerHTML='<span class="pill '+intentClass(intent)+'">'+(intent||'reply').replace(/</g,'')+'</span><span class="txt">'+(text||'').replace(/</g,'&lt;')+'</span>';box.prepend(s);while(box.children.length>6)box.removeChild(box.lastChild);}
+function mdBold(t){return t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');}
+function addBubble(role,text){const r=document.createElement('div');r.className='row '+(role==='me'?'me':'bot');const b=document.createElement('div');b.className='bubble';b.innerHTML=role==='me'?text.replace(/</g,'&lt;'):mdBold(text.replace(/</g,'&lt;'));r.appendChild(b);stream.appendChild(r);stream.scrollTop=stream.scrollHeight;return r;}
 function fmt(d){if(!d)return"—";try{return new Date(d+"T00:00:00").toLocaleDateString(undefined,{month:'short',day:'numeric'});}catch(e){return d;}}
-function renderBooking(o){const box=document.getElementById('bookings');if(box.querySelector('.empty'))box.innerHTML='';const nights=Number(o.nights)||1;const room=TENANT.rooms.find(r=>r.type===o.room_type)||{rate:Math.round((Number(o.quoted_usd)/Math.max(nights,1))/(1-TENANT.discount/100))||0};const gross=Math.round(room.rate*nights);const net=Math.round(Number(o.quoted_usd)||gross*(1-TENANT.discount/100));const otaSave=Math.round(net*TENANT.ota/100);const c=document.createElement('div');c.className='booking-card';c.innerHTML='<div class="bh"><span class="t">'+((o.guest_name||'Guest'))+' · '+((o.room_type||'Room'))+'</span><span class="tag">DIRECT</span></div><div class="brow"><span class="l">Dates</span><span>'+fmt(o.checkin)+' → '+fmt(o.checkout)+' · '+nights+' night'+(nights>1?'s':'')+'</span></div><div class="brow"><span class="l">Guests</span><span>'+(o.guests||'—')+'</span></div><div class="brow"><span class="l">Rate × nights</span><span>$'+room.rate+' × '+nights+' = $'+gross+'</span></div><div class="brow total"><span>Direct total (−'+TENANT.discount+'% perk)</span><span class="v">$'+net+'</span></div><div class="saved"><span>Commission Booking.com would have taken</span><b>+$'+otaSave+'</b></div>';box.prepend(c);captured+=net;commission+=otaSave;bookings++;document.getElementById('capTotal').textContent=captured.toLocaleString();document.getElementById('commSaved').textContent='$'+commission.toLocaleString();document.getElementById('bkCount').textContent=bookings;document.getElementById('tallyNote').textContent='That is real money that stayed with the hotel instead of the OTA.';}
-
+function showBooking(o){
+  const nights=Number(o.nights)||1;
+  const room=ROOMS.find(r=>r.type===o.room_type)||{rate:Math.round((Number(o.quoted_usd)/Math.max(nights,1))/(1-DISCOUNT/100))||0};
+  const gross=Math.round(room.rate*nights);
+  const net=Math.round(Number(o.quoted_usd)||gross*(1-DISCOUNT/100));
+  const otaSave=Math.round(net*OTA/100);
+  const c=document.createElement('div');c.className='bcard';
+  c.innerHTML='<div class="t"><span>'+(o.guest_name||'Guest')+' · '+(o.room_type||'Studio')+'</span><span class="tag">DIRECT</span></div>'+
+    '<div class="brow"><span class="l">Dates</span><span>'+fmt(o.checkin)+' → '+fmt(o.checkout)+' · '+nights+'n</span></div>'+
+    '<div class="brow"><span class="l">Guests</span><span>'+(o.guests||'—')+'</span></div>'+
+    '<div class="brow"><span class="l">Rate × nights</span><span>$'+room.rate+' × '+nights+' = $'+gross+'</span></div>'+
+    '<div class="brow tot"><span>Direct total (−'+DISCOUNT+'%)</span><span>$'+net+'</span></div>'+
+    '<div class="saved2"><span>Kept off Booking.com (~'+OTA+'%)</span><b>+$'+otaSave+'</b></div>';
+  stream.appendChild(c);stream.scrollTop=stream.scrollHeight;
+  saved+=otaSave;
+  document.getElementById('savedbar').classList.add('show');
+  document.getElementById('savedval').textContent='$'+saved.toLocaleString()+' kept off OTA';
+}
 async function send(){
   const text=input.value.trim();if(!text)return;input.value='';
   addBubble('me',text);
   const btn=document.getElementById('sendBtn');btn.disabled=true;
   const typing=addBubble('bot',lang==='es'?'escribiendo…':'typing…');typing.classList.add('typing');
   try{
-    const res=await fetch(WEBHOOK,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({From:GUEST_ID,To:HOTEL_WHATSAPP,Body:text})});
+    const res=await fetch(WEBHOOK,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({From:GUEST,To:HOTEL_WA,Body:text})});
     const o=await res.json();
     typing.remove();
-    const reply=o.reply||(lang==='es'?'(sin respuesta)':'(no reply)');
-    addBubble('bot',reply);
-    addSignal(o.intent,reply);
-    if(o.booking_ready){const key=[o.room_type,o.checkin,o.checkout,o.guests].join('|');if(!seen.has(key)){seen.add(key);renderBooking(o);}}
-  }catch(err){
+    addBubble('bot',o.reply||(lang==='es'?'(sin respuesta)':'(no reply)'));
+    if(o.booking_ready){const k=[o.room_type,o.checkin,o.checkout,o.guests].join('|');if(!seen.has(k)){seen.add(k);showBooking(o);}}
+  }catch(e){
     typing.remove();
-    addBubble('bot',lang==='es'?'Ups — no pude conectar al servicio. Inténtalo de nuevo.':'Hmm — could not reach the service. Please try again.');
+    addBubble('bot',lang==='es'?'Ups — no pude conectar. Inténtalo de nuevo.':'Hmm — could not connect. Please try again.');
   }finally{btn.disabled=false;input.focus();}
 }
-setLang('en');addBubble('bot',GREET.en);
+document.getElementById('sendBtn').onclick=send;
+input.addEventListener('keydown',e=>{if(e.key==='Enter')send();});
+setLang('en');
+addBubble('bot',GREET.en);
 </script>
 </body>
 </html>
