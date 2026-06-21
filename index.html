@@ -1,157 +1,309 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
-<title>Ocean Breeze Studios — Concierge</title>
-<meta name="description" content="24/7 concierge for Ocean Breeze Studios, Zona Colonial, Santo Domingo. Chat or talk — ask anything, book direct." />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Ocean Breeze Studios · Zona Colonial, Santo Domingo</title>
+<meta name="description" content="Estudios boutique en el corazon de la Zona Colonial. Reserva directa, check-in 24/7, concierge con IA por chat y voz." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={theme:{extend:{
+  colors:{ocean:{50:'#effbfa',100:'#d8f3f1',300:'#74cfca',500:'#0e9a93',600:'#0e7a77',700:'#0e6b73',800:'#0a4d53',900:'#0c343a'},
+    sand:{50:'#fbf7ee',100:'#f7f0e3',200:'#efe5d2'}, coral:'#e8745b', gold:'#cf9233'},
+  fontFamily:{display:['Fraunces','serif'],sans:['DM Sans','system-ui','sans-serif']},
+  boxShadow:{soft:'0 18px 50px -22px rgba(12,52,58,.45)'}
+}}};
+</script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap');
-  :root{
-    --ocean:#0e6b73; --ocean-deep:#094a50; --foam:#43bdb8; --sand:#f7f0e3; --sand-2:#efe5d2;
-    --coral:#e8745b; --ink:#243032; --muted:#6f7d7e; --line:rgba(36,48,50,.12);
-    --me:#0e6b73; --bot:#ffffff; --gold:#cf9233;
-  }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0;padding:0;height:100%;overscroll-behavior:none}
-  body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);background:linear-gradient(170deg,#0c4248,#0e6b73 60%,#0a3a40)}
-  .app{display:flex;flex-direction:column;height:100dvh;max-width:560px;margin:0 auto;background:var(--sand);position:relative;overflow:hidden}
-  @media(min-width:600px){.app{border-left:1px solid rgba(0,0,0,.12);border-right:1px solid rgba(0,0,0,.12);box-shadow:0 0 60px rgba(0,0,0,.35)}}
-  .hdr{flex:none;background:linear-gradient(180deg,var(--ocean),var(--ocean-deep));color:#fff;padding:calc(env(safe-area-inset-top) + 12px) 14px 12px;display:flex;align-items:center;gap:11px}
-  .logo{width:42px;height:42px;border-radius:13px;background:radial-gradient(circle at 30% 25%,#5fd0cb,#0a4d53);display:grid;place-items:center;flex:none;border:1.5px solid rgba(255,255,255,.25);font-size:20px}
-  .htext{flex:1;min-width:0}
-  .htext .name{font-family:'Fraunces',serif;font-weight:600;font-size:17px;line-height:1.1}
-  .htext .sub{font-size:11.5px;color:#bfe9e4;display:flex;align-items:center;gap:6px;margin-top:2px}
-  .htext .sub::before{content:"";width:7px;height:7px;border-radius:50%;background:#7ff0d2;box-shadow:0 0 0 3px rgba(127,240,210,.3)}
-  .lang{display:flex;background:rgba(0,0,0,.22);border-radius:999px;padding:3px;flex:none}
-  .lang button{border:0;background:transparent;color:#bfe9e4;font-weight:600;font-size:12px;padding:5px 10px;border-radius:999px;font-family:inherit}
-  .lang button.on{background:#fff;color:var(--ocean-deep)}
-  .savedbar{flex:none;background:var(--ocean-deep);color:#eafffb;font-size:12px;padding:7px 14px;display:none;align-items:center;justify-content:space-between;gap:8px}
-  .savedbar.show{display:flex}
-  .savedbar b{color:#ffd98a;font-weight:700}
-  .stream{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 13px 8px;display:flex;flex-direction:column;gap:9px;background:radial-gradient(120% 60% at 50% 0%,rgba(67,189,184,.10),transparent 60%),var(--sand)}
-  .row{display:flex;max-width:100%}
-  .row.me{justify-content:flex-end}
-  .bubble{max-width:84%;padding:10px 13px;border-radius:17px;font-size:15px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word;box-shadow:0 1px 1.5px rgba(36,48,50,.08)}
-  .bot .bubble{background:var(--bot);color:var(--ink);border-bottom-left-radius:5px}
-  .me .bubble{background:var(--me);color:#fff;border-bottom-right-radius:5px}
-  .typing .bubble{color:var(--muted);font-style:italic}
-  .bubble strong{font-weight:700}
-  .bcard{align-self:flex-start;max-width:88%;border:1.5px solid var(--gold);background:linear-gradient(180deg,#fff,#fdf6e7);border-radius:15px;padding:13px;box-shadow:0 4px 14px rgba(207,146,51,.18);animation:pop .35s ease}
-  @keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
-  .bcard .t{font-family:'Fraunces',serif;font-weight:600;font-size:14.5px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;gap:8px}
-  .bcard .tag{font-size:9.5px;font-weight:700;letter-spacing:.1em;color:#fff;background:var(--ocean);padding:3px 7px;border-radius:6px}
-  .brow{display:flex;justify-content:space-between;font-size:12.5px;padding:2px 0}
-  .brow .l{color:var(--muted)}
-  .brow.tot{border-top:1px solid var(--line);margin-top:5px;padding-top:6px;font-weight:700}
-  .saved2{margin-top:8px;background:var(--ocean-deep);color:#eafffb;border-radius:8px;padding:7px 10px;font-size:11.5px;display:flex;justify-content:space-between;align-items:center}
-  .saved2 b{color:#ffd98a}
-  .chips{flex:none;display:flex;gap:7px;padding:8px 12px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .chips::-webkit-scrollbar{display:none}
-  .chip{flex:none;border:1px solid var(--line);background:#fff;color:var(--ocean-deep);font-size:12.5px;font-weight:600;padding:8px 13px;border-radius:999px;font-family:inherit;white-space:nowrap}
-  .chip:active{background:var(--sand-2)}
-  .composer{flex:none;display:flex;gap:8px;align-items:center;padding:9px 11px calc(env(safe-area-inset-bottom) + 9px);background:var(--sand-2);border-top:1px solid var(--line)}
-  .composer input{flex:1;border:1px solid var(--line);border-radius:999px;padding:13px 16px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);outline:none;min-width:0}
-  .composer input:focus{border-color:var(--foam)}
-  .send{flex:none;border:0;background:var(--ocean);color:#fff;width:48px;height:48px;border-radius:50%;display:grid;place-items:center}
-  .send:active{background:var(--ocean-deep)}
-  .send:disabled{opacity:.5}
-  .vhint{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:40;display:flex;justify-content:center;pointer-events:none}
-  .vhint span{background:rgba(9,74,80,.92);color:#d8fffb;font-size:11px;padding:5px 11px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.3)}
-  a{color:var(--ocean)}
+  html{scroll-behavior:smooth}
+  body{font-family:'DM Sans',sans-serif;background:#fbf7ee}
+  .hero-img{background:#0a4d53 url('https://lh3.googleusercontent.com/sitesv/AA5AbUBn8rAMCLaRUYUWZ59yg8VyvG6jJlPqJSZHjF8Wc6GYE_wwz-k-oO71Hg5Yw94GDlDzeP4Jc20UG8byPXgqtSy1O_a9KA710wMXI-4Lz2YEL70RwQZHCBYHD-n31BfYtTMudiCwcvoiA2iBZTfJ0_lLwXApnSw6eD75Hwq3bFwlaaJ5scf3PQy1_gzq4fI8y5Llz86R668gsD6ASlKcHw4MxnejwzmnPwzLwGsj=w1280') center/cover no-repeat}
+  .fade-up{animation:fu .6s ease both}@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  ::-webkit-scrollbar{width:0}
+  /* elevenlabs widget sits bottom-right by default */
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="hdr">
-    <div class="logo">🌊</div>
-    <div class="htext">
-      <div class="name">Ocean Breeze Studios</div>
-      <div class="sub">Zona Colonial · online 24/7 · ES/EN</div>
-    </div>
-    <div class="lang">
-      <button id="les" onclick="setLang('es')">ES</button>
-      <button id="len" class="on" onclick="setLang('en')">EN</button>
-    </div>
-  </div>
-  <div class="savedbar" id="savedbar"><span>Booked direct this session</span><b id="savedval">$0 kept off OTA</b></div>
-  <div class="stream" id="stream"></div>
-  <div class="chips" id="chips"></div>
-  <div class="composer">
-    <input id="input" autocomplete="off" enterkeyhint="send" placeholder="Type a message…" />
-    <button class="send" id="sendBtn" aria-label="Send">
-      <svg width="21" height="21" viewBox="0 0 24 24" fill="none"><path d="M3.4 20.6 21 12 3.4 3.4l0 6.9L15 12 3.4 13.7z" fill="currentColor"/></svg>
-    </button>
-  </div>
-</div>
-<div class="vhint"><span id="vhintTxt">🎙 Tap the mic to talk (voice demo)</span></div>
+<div id="root"></div>
 
+<!-- ElevenLabs voice widget (advanced). NOTE: HVAC agent as placeholder until an Ocean Breeze agent exists -->
 <elevenlabs-convai agent-id="agent_0301kstp9w36en2rs3bsyamg4p1f"></elevenlabs-convai>
 <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
 
-<script>
-const WEBHOOK="https://ai-process.app.n8n.cloud/webhook/concierge";
+<script type="text/babel">
+const {useState,useRef,useEffect}=React;
+const CHAT="https://ai-process.app.n8n.cloud/webhook/concierge";
+const REGISTER="https://ai-process.app.n8n.cloud/webhook/concierge-register";
 const HOTEL_WA="+18096850193";
+const WA_LINK="https://wa.me/18096850193?text="+encodeURIComponent("Hola Ocean Breeze, quisiera informacion / I'd like info");
 const GUEST="web-"+Math.random().toString(36).slice(2,9);
-const ROOMS=[{type:"Basic Studio",rate:39},{type:"Deluxe Studio",rate:45},{type:"Luxe Studio",rate:49}];
-const DISCOUNT=10, OTA=15;
-let lang="en", saved=0;
-const seen=new Set();
-const GREET={
-  en:"Hi! 👋 Welcome to Ocean Breeze Studios in the Zona Colonial. Ask me anything — rooms, prices, parking, where we are — or tell me your dates and I'll book you in. You can also tap the mic to talk.",
-  es:"¡Hola! 👋 Bienvenido a Ocean Breeze Studios en la Zona Colonial. Pregúntame lo que quieras —habitaciones, precios, parqueo, ubicación— o dime tus fechas y te reservo. También puedes tocar el micrófono para hablar."
-};
-const CHIPS={
-  en:["Room types & prices","Is there parking?","Where are you located?","Book a Deluxe, 2 nights"],
-  es:["Tipos y precios","¿Hay parqueo?","¿Dónde están ubicados?","Reservar Deluxe, 2 noches"]
-};
-const stream=document.getElementById('stream'), chipsEl=document.getElementById('chips'), input=document.getElementById('input');
-function setLang(l){lang=l;document.getElementById('les').classList.toggle('on',l==='es');document.getElementById('len').classList.toggle('on',l==='en');
-  input.placeholder=l==='es'?"Escribe un mensaje…":"Type a message…";
-  document.getElementById('vhintTxt').textContent=l==='es'?"🎙 Toca el micrófono para hablar (voz demo)":"🎙 Tap the mic to talk (voice demo)";
-  renderChips();}
-function renderChips(){chipsEl.innerHTML='';CHIPS[lang].forEach(c=>{const b=document.createElement('button');b.className='chip';b.textContent=c;b.onclick=()=>{input.value=c;send();};chipsEl.appendChild(b);});}
-function mdBold(t){return t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');}
-function addBubble(role,text){const r=document.createElement('div');r.className='row '+(role==='me'?'me':'bot');const b=document.createElement('div');b.className='bubble';b.innerHTML=role==='me'?text.replace(/</g,'&lt;'):mdBold(text.replace(/</g,'&lt;'));r.appendChild(b);stream.appendChild(r);stream.scrollTop=stream.scrollHeight;return r;}
-function fmt(d){if(!d)return"—";try{return new Date(d+"T00:00:00").toLocaleDateString(undefined,{month:'short',day:'numeric'});}catch(e){return d;}}
-function showBooking(o){
-  const nights=Number(o.nights)||1;
-  const room=ROOMS.find(r=>r.type===o.room_type)||{rate:Math.round((Number(o.quoted_usd)/Math.max(nights,1))/(1-DISCOUNT/100))||0};
-  const gross=Math.round(room.rate*nights);
-  const net=Math.round(Number(o.quoted_usd)||gross*(1-DISCOUNT/100));
-  const otaSave=Math.round(net*OTA/100);
-  const c=document.createElement('div');c.className='bcard';
-  c.innerHTML='<div class="t"><span>'+(o.guest_name||'Guest')+' · '+(o.room_type||'Studio')+'</span><span class="tag">DIRECT</span></div>'+
-    '<div class="brow"><span class="l">Dates</span><span>'+fmt(o.checkin)+' → '+fmt(o.checkout)+' · '+nights+'n</span></div>'+
-    '<div class="brow"><span class="l">Guests</span><span>'+(o.guests||'—')+'</span></div>'+
-    '<div class="brow"><span class="l">Rate × nights</span><span>$'+room.rate+' × '+nights+' = $'+gross+'</span></div>'+
-    '<div class="brow tot"><span>Direct total (−'+DISCOUNT+'%)</span><span>$'+net+'</span></div>'+
-    '<div class="saved2"><span>Kept off Booking.com (~'+OTA+'%)</span><b>+$'+otaSave+'</b></div>';
-  stream.appendChild(c);stream.scrollTop=stream.scrollHeight;
-  saved+=otaSave;
-  document.getElementById('savedbar').classList.add('show');
-  document.getElementById('savedval').textContent='$'+saved.toLocaleString()+' kept off OTA';
+
+const ROOMS=[
+  {name:"Basic Studio",price:39,desc:"Estudio acogedor con cocina privada, A/C y WiFi. Ideal para viajar ligero."},
+  {name:"Deluxe Studio",price:45,desc:"Mas espacio y luz, algunos con balcon. Tu base comoda en la Zona Colonial.",feat:true},
+  {name:"Luxe Studio",price:49,desc:"Nuestro estudio mas amplio, con los mejores acabados y terraza cercana."}
+];
+const AMEN=[["📶","WiFi gratis"],["❄️","Aire acondicionado"],["🍳","Cocina privada"],["🛁","Baño privado"],["📺","TV con cable"],["🌅","Terraza en la azotea"],["🕛","Recepcion 24/7"],["🗝️","Check-in flexible"]];
+
+function Nav(){
+  return (
+    <nav className="fixed top-0 inset-x-0 z-40 backdrop-blur bg-sand-50/80 border-b border-black/5">
+      <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
+        <a href="#top" className="font-display text-xl font-600 text-ocean-800 tracking-tight">Ocean Breeze <span className="text-ocean-500">Studios</span></a>
+        <div className="hidden sm:flex items-center gap-7 text-sm font-500 text-ocean-900/70">
+          <a href="#rooms" className="hover:text-ocean-600">Estudios</a>
+          <a href="#amenities" className="hover:text-ocean-600">Servicios</a>
+          <a href="#location" className="hover:text-ocean-600">Ubicacion</a>
+        </div>
+        <a href="#checkin" className="bg-ocean-700 hover:bg-ocean-800 text-white text-sm font-600 px-5 py-2.5 rounded-full transition">Registrarse</a>
+      </div>
+    </nav>
+  );
 }
-async function send(){
-  const text=input.value.trim();if(!text)return;input.value='';
-  addBubble('me',text);
-  const btn=document.getElementById('sendBtn');btn.disabled=true;
-  const typing=addBubble('bot',lang==='es'?'escribiendo…':'typing…');typing.classList.add('typing');
-  try{
-    const res=await fetch(WEBHOOK,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({From:GUEST,To:HOTEL_WA,Body:text})});
-    const o=await res.json();
-    typing.remove();
-    addBubble('bot',o.reply||(lang==='es'?'(sin respuesta)':'(no reply)'));
-    if(o.booking_ready){const k=[o.room_type,o.checkin,o.checkout,o.guests].join('|');if(!seen.has(k)){seen.add(k);showBooking(o);}}
-  }catch(e){
-    typing.remove();
-    addBubble('bot',lang==='es'?'Ups — no pude conectar. Inténtalo de nuevo.':'Hmm — could not connect. Please try again.');
-  }finally{btn.disabled=false;input.focus();}
+
+function Hero(){
+  return (
+    <header id="top" className="relative hero-img min-h-[88vh] flex items-end">
+      <div className="absolute inset-0 bg-gradient-to-t from-ocean-900/90 via-ocean-900/45 to-ocean-900/30"></div>
+      <div className="relative max-w-6xl mx-auto px-5 pb-16 pt-32 w-full text-white fade-up">
+        <span className="inline-flex items-center gap-2 text-[11px] tracking-[.2em] uppercase font-700 bg-white/15 border border-white/25 rounded-full px-3 py-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-ocean-300"></span>Zona Colonial · Santo Domingo
+        </span>
+        <h1 className="font-display font-600 leading-[1.02] tracking-tight mt-5 text-[42px] sm:text-6xl max-w-3xl">
+          Tu hogar lejos de casa, en el corazon de la historia.
+        </h1>
+        <p className="mt-5 max-w-xl text-white/80 text-lg">Estudios boutique a metros de El Conde y Parque Independencia. Cocina propia, recepcion 24/7 y reserva directa con el mejor precio.</p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <a href="#checkin" className="bg-white text-ocean-800 font-700 px-7 py-3.5 rounded-full hover:translate-y-[-2px] transition shadow-soft">Reservar directo · desde $39</a>
+          <a href="#rooms" className="border border-white/40 text-white font-600 px-7 py-3.5 rounded-full hover:bg-white/10 transition">Ver estudios</a>
+        </div>
+      </div>
+    </header>
+  );
 }
-document.getElementById('sendBtn').onclick=send;
-input.addEventListener('keydown',e=>{if(e.key==='Enter')send();});
-setLang('es');
-addBubble('bot',GREET.es);
+
+function Rooms(){
+  return (
+    <section id="rooms" className="max-w-6xl mx-auto px-5 py-20">
+      <p className="text-ocean-600 text-xs font-700 tracking-[.25em] uppercase">Nuestros estudios</p>
+      <h2 className="font-display text-4xl font-600 text-ocean-900 mt-3">Elige tu espacio</h2>
+      <p className="text-ocean-900/60 mt-3 max-w-lg">Cada estudio incluye cocina privada, A/C y WiFi. Reserva directa con <b className="text-ocean-700">10% de descuento</b> frente a las OTAs.</p>
+      <div className="grid sm:grid-cols-3 gap-6 mt-10">
+        {ROOMS.map(r=>(
+          <div key={r.name} className={"rounded-3xl p-7 border transition hover:-translate-y-1 "+(r.feat?"bg-ocean-700 text-white border-ocean-700 shadow-soft":"bg-white border-black/5 shadow-soft")}>
+            {r.feat&&<span className="text-[10px] font-700 tracking-widest uppercase bg-gold text-ocean-900 px-2.5 py-1 rounded-full">Mas popular</span>}
+            <h3 className={"font-display text-2xl font-600 mt-3 "+(r.feat?"text-white":"text-ocean-900")}>{r.name}</h3>
+            <p className={"text-sm mt-2 "+(r.feat?"text-white/80":"text-ocean-900/60")}>{r.desc}</p>
+            <div className="mt-6 flex items-end gap-1">
+              <span className={"font-display text-4xl font-700 "+(r.feat?"text-white":"text-ocean-700")}>${r.price}</span>
+              <span className={"text-sm mb-1 "+(r.feat?"text-white/70":"text-ocean-900/50")}>/ noche</span>
+            </div>
+            <a href="#checkin" className={"mt-5 block text-center font-600 py-3 rounded-full transition "+(r.feat?"bg-white text-ocean-800 hover:bg-sand-100":"bg-ocean-700 text-white hover:bg-ocean-800")}>Reservar</a>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Amenities(){
+  return (
+    <section id="amenities" className="bg-white border-y border-black/5">
+      <div className="max-w-6xl mx-auto px-5 py-20">
+        <p className="text-ocean-600 text-xs font-700 tracking-[.25em] uppercase">Servicios</p>
+        <h2 className="font-display text-4xl font-600 text-ocean-900 mt-3">Todo lo que necesitas</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-10">
+          {AMEN.map(([i,t])=>(
+            <div key={t} className="rounded-2xl bg-sand-50 border border-black/5 p-6 text-center hover:bg-sand-100 transition">
+              <div className="text-3xl">{i}</div>
+              <div className="mt-2 font-600 text-ocean-900 text-sm">{t}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Location(){
+  return (
+    <section id="location" className="max-w-6xl mx-auto px-5 py-20 grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <p className="text-ocean-600 text-xs font-700 tracking-[.25em] uppercase">Ubicacion</p>
+        <h2 className="font-display text-4xl font-600 text-ocean-900 mt-3">A metros de todo</h2>
+        <p className="text-ocean-900/65 mt-4 leading-relaxed">Estamos en Calle Palo Hincado 202, esq. Calle Canela — a ~100m de Parque Independencia y la calle El Conde, cerca de Parque Colon y la Plaza Espana. El aeropuerto Las Americas (SDQ) esta a ~25 minutos en auto.</p>
+        <ul className="mt-5 space-y-2 text-ocean-900/75 text-sm">
+          <li>📍 Calle Palo Hincado 202, Zona Colonial, Santo Domingo</li>
+          <li>📞 WhatsApp / Tel: (809) 685-0193</li>
+          <li>✉️ oceanbreezestudios@gmail.com</li>
+        </ul>
+      </div>
+      <div className="rounded-3xl overflow-hidden shadow-soft border border-black/5 h-72 md:h-80">
+        <iframe title="map" className="w-full h-full" loading="lazy"
+          src="https://maps.google.com/maps?q=18.470376,-69.890885&z=16&output=embed"></iframe>
+      </div>
+    </section>
+  );
+}
+
+function CheckIn(){
+  const [f,setF]=useState({full_name:"",email:"",phone:"",checkin:"",checkout:"",guests:"2",room_pref:"Deluxe Studio"});
+  const [state,setState]=useState("idle");
+  const set=(k)=>(e)=>setF({...f,[k]:e.target.value});
+  async function submit(e){
+    e.preventDefault();
+    if(!f.full_name||!f.email){return;}
+    setState("sending");
+    try{
+      await fetch(REGISTER,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams(f)});
+      setState("done");
+    }catch(err){setState("error");}
+  }
+  if(state==="done"){
+    return (
+      <section id="checkin" className="bg-ocean-800">
+        <div className="max-w-3xl mx-auto px-5 py-24 text-center text-white fade-up">
+          <div className="text-5xl">🌊</div>
+          <h2 className="font-display text-4xl font-600 mt-4">¡Gracias, {f.full_name.split(" ")[0]}!</h2>
+          <p className="text-white/80 mt-3 max-w-lg mx-auto">Te enviamos un correo de bienvenida con tu oferta de reserva directa. Responde con tus fechas y te confirmamos al mejor precio.</p>
+          <a href={WA_LINK} target="_blank" className="inline-block mt-7 bg-[#25D366] text-white font-700 px-7 py-3.5 rounded-full">Escribenos por WhatsApp</a>
+        </div>
+      </section>
+    );
+  }
+  return (
+    <section id="checkin" className="bg-ocean-800">
+      <div className="max-w-5xl mx-auto px-5 py-20 grid md:grid-cols-2 gap-10 items-center">
+        <div className="text-white">
+          <p className="text-ocean-300 text-xs font-700 tracking-[.25em] uppercase">Registro / Check-in</p>
+          <h2 className="font-display text-4xl font-600 mt-3">Registrate y reserva directo</h2>
+          <p className="text-white/75 mt-4 leading-relaxed">Deja tus datos y te enviamos una oferta de reserva directa con <b>10% de descuento</b> y check-in flexible 24/7. Sin comisiones de OTA.</p>
+          <div className="mt-6 flex items-center gap-3 text-white/70 text-sm">
+            <span className="w-9 h-9 rounded-full bg-white/10 grid place-items-center">✓</span>
+            Confirmacion por correo · respuesta rapida
+          </div>
+        </div>
+        <form onSubmit={submit} className="bg-white rounded-3xl p-7 shadow-soft space-y-3">
+          <input required value={f.full_name} onChange={set("full_name")} placeholder="Nombre completo" className="w-full rounded-xl border border-black/10 px-4 py-3 outline-none focus:border-ocean-500"/>
+          <input required type="email" value={f.email} onChange={set("email")} placeholder="Correo electronico" className="w-full rounded-xl border border-black/10 px-4 py-3 outline-none focus:border-ocean-500"/>
+          <input value={f.phone} onChange={set("phone")} placeholder="WhatsApp / telefono" className="w-full rounded-xl border border-black/10 px-4 py-3 outline-none focus:border-ocean-500"/>
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="text-xs text-ocean-900/50 font-600">Entrada</label><input type="date" value={f.checkin} onChange={set("checkin")} className="w-full rounded-xl border border-black/10 px-3 py-2.5 outline-none focus:border-ocean-500"/></div>
+            <div><label className="text-xs text-ocean-900/50 font-600">Salida</label><input type="date" value={f.checkout} onChange={set("checkout")} className="w-full rounded-xl border border-black/10 px-3 py-2.5 outline-none focus:border-ocean-500"/></div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <select value={f.guests} onChange={set("guests")} className="rounded-xl border border-black/10 px-3 py-3 outline-none focus:border-ocean-500">
+              <option value="1">1 huesped</option><option value="2">2 huespedes</option><option value="3">3 huespedes</option>
+            </select>
+            <select value={f.room_pref} onChange={set("room_pref")} className="rounded-xl border border-black/10 px-3 py-3 outline-none focus:border-ocean-500">
+              <option>Basic Studio</option><option>Deluxe Studio</option><option>Luxe Studio</option>
+            </select>
+          </div>
+          <button disabled={state==="sending"} className="w-full bg-ocean-700 hover:bg-ocean-800 disabled:opacity-60 text-white font-700 py-3.5 rounded-full transition">
+            {state==="sending"?"Enviando…":"Registrarme y recibir oferta"}
+          </button>
+          {state==="error"&&<p className="text-coral text-sm text-center">No se pudo enviar. Intenta de nuevo.</p>}
+        </form>
+      </div>
+    </section>
+  );
+}
+
+function Footer(){
+  return (
+    <footer className="bg-ocean-900 text-white/70">
+      <div className="max-w-6xl mx-auto px-5 py-14 grid sm:grid-cols-3 gap-8">
+        <div>
+          <div className="font-display text-xl text-white font-600">Ocean Breeze Studios</div>
+          <p className="text-sm mt-3">Tu hogar lejos de casa en la Zona Colonial de Santo Domingo.</p>
+        </div>
+        <div className="text-sm space-y-1.5">
+          <div className="text-white font-600 mb-2">Contacto</div>
+          <div>Calle Palo Hincado 202, Zona Colonial</div>
+          <div>WhatsApp / Tel: (809) 685-0193</div>
+          <div>oceanbreezestudios@gmail.com</div>
+        </div>
+        <div className="text-sm space-y-1.5">
+          <div className="text-white font-600 mb-2">Reserva</div>
+          <a href="#checkin" className="block hover:text-white">Registro / Check-in</a>
+          <a href="#rooms" className="block hover:text-white">Estudios y precios</a>
+          <a href={WA_LINK} target="_blank" className="block hover:text-white">WhatsApp directo</a>
+        </div>
+      </div>
+      <div className="border-t border-white/10 text-center text-xs py-5">© 2026 Ocean Breeze Studios · Reserva directa, sin comisiones</div>
+    </footer>
+  );
+}
+
+/* ---- Text chatbot chip ---- */
+function ChatWidget(){
+  const [open,setOpen]=useState(false);
+  const [msgs,setMsgs]=useState([{role:"bot",text:"¡Hola! 🌊 Soy el concierge de Ocean Breeze. Preguntame por estudios, precios, parqueo o ubicacion."}]);
+  const [val,setVal]=useState("");const [busy,setBusy]=useState(false);
+  const end=useRef(null);
+  useEffect(()=>{end.current&&end.current.scrollIntoView({behavior:"smooth"});},[msgs,open]);
+  async function send(){
+    const t=val.trim();if(!t||busy)return;setVal("");
+    setMsgs(m=>[...m,{role:"me",text:t}]);setBusy(true);
+    setMsgs(m=>[...m,{role:"bot",text:"…",typing:true}]);
+    try{
+      const r=await fetch(CHAT,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({From:GUEST,To:HOTEL_WA,Body:t})});
+      const o=await r.json();
+      setMsgs(m=>[...m.filter(x=>!x.typing),{role:"bot",text:o.reply||"…"}]);
+    }catch(e){setMsgs(m=>[...m.filter(x=>!x.typing),{role:"bot",text:"No pude conectar. Intenta de nuevo."}]);}
+    finally{setBusy(false);}
+  }
+  return (
+    <div>
+      {open&&(
+        <div className="fixed z-50 bottom-24 right-4 w-[min(92vw,360px)] h-[min(70vh,520px)] bg-white rounded-3xl shadow-soft border border-black/10 flex flex-col overflow-hidden fade-up">
+          <div className="bg-ocean-700 text-white px-4 py-3 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-ocean-500 grid place-items-center">🌊</div>
+            <div className="flex-1"><div className="font-600 text-sm">Concierge · Chat</div><div className="text-[11px] text-ocean-100">Ocean Breeze Studios</div></div>
+            <button onClick={()=>setOpen(false)} className="text-white/80 text-xl leading-none">×</button>
+          </div>
+          <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-sand-50">
+            {msgs.map((m,i)=>(
+              <div key={i} className={"flex "+(m.role==="me"?"justify-end":"")}>
+                <div className={"max-w-[84%] px-3.5 py-2 rounded-2xl text-[14px] leading-snug "+(m.role==="me"?"bg-ocean-700 text-white rounded-br-sm":"bg-white border border-black/5 text-ocean-900 rounded-bl-sm "+(m.typing?"italic text-ocean-900/50":""))}>{m.text}</div>
+              </div>
+            ))}
+            <div ref={end}></div>
+          </div>
+          <div className="p-2.5 border-t border-black/10 flex gap-2 bg-white">
+            <input value={val} onChange={e=>setVal(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()} placeholder="Escribe un mensaje…" className="flex-1 rounded-full border border-black/10 px-4 py-2.5 text-sm outline-none focus:border-ocean-500"/>
+            <button onClick={send} disabled={busy} className="w-10 h-10 rounded-full bg-ocean-700 text-white grid place-items-center disabled:opacity-50">➤</button>
+          </div>
+        </div>
+      )}
+      <button onClick={()=>setOpen(!open)} className="fixed z-50 bottom-24 right-4 bg-ocean-700 hover:bg-ocean-800 text-white rounded-full shadow-soft w-14 h-14 grid place-items-center text-2xl transition" title="Chat con el concierge">
+        {open?"×":"💬"}
+      </button>
+      <span className="fixed z-40 bottom-[152px] right-4 text-[10px] bg-ocean-900/85 text-ocean-100 px-2 py-0.5 rounded-full pointer-events-none">Chat</span>
+    </div>
+  );
+}
+
+function WhatsAppBtn(){
+  return (
+    <a href={WA_LINK} target="_blank" className="fixed z-50 bottom-6 left-4 bg-[#25D366] hover:scale-105 transition text-white rounded-full shadow-soft w-14 h-14 grid place-items-center" title="WhatsApp">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+    </a>
+  );
+}
+
+function App(){
+  return (<div>
+    <Nav/><Hero/><Rooms/><Amenities/><Location/><CheckIn/><Footer/>
+    <ChatWidget/><WhatsAppBtn/>
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 </body>
 </html>
