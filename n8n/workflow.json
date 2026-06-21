@@ -1,0 +1,25 @@
+{
+  "name": "Direct Booking Concierge — Hotel MVP",
+  "active": true,
+  "workflowId": "iTt8wDnZn2MR7KRI",
+  "instance": "https://ai-process.app.n8n.cloud",
+  "productionWebhook": "https://ai-process.app.n8n.cloud/webhook/concierge",
+  "description": "WhatsApp + web AI concierge for independent DR hotels. Webhook -> normalize -> resolve tenant (Supabase) -> GPT-4o agent (structured output) -> respond -> log -> if booking_ready: capture booking + notify front desk.",
+  "credentials": {
+    "supabaseApi": "Supabase MyScheduler (RZRQitiBz6NunbwL)",
+    "openAiApi": "OpenAi account (FvPJm03Y9MaN0nwP)",
+    "twilioApi": "Twilio account (hiOkbAKi2rkktdrh)"
+  },
+  "flow": [
+    "Inbound Message (webhook POST /concierge, responseNode, allowedOrigins=*)",
+    "Normalize Message (Set: guest_contact, tenant_whatsapp, message, channel)",
+    "Get Tenant Config (Supabase getAll concierge_tenants where whatsapp_number = tenant_whatsapp)",
+    "AI Concierge (langchain agent, GPT-4o + structured output parser)",
+    "Reply To Guest (respondToWebhook, returns full agent output object)",
+    "Log Conversation (Supabase create concierge_message_log)",
+    "Booking Ready? (IF agent.output.booking_ready == true)",
+    "  -> Capture Direct Booking (Supabase create concierge_bookings, status=pending)",
+    "  -> Notify Front Desk (Twilio WhatsApp, onError=continueRegularOutput / non-blocking)"
+  ],
+  "notes": "Full node definitions are managed in n8n. Re-import via the n8n MCP SDK builder; this file is the human-readable export of the deployed topology."
+}
