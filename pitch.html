@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concierge de Reservas Directas — Ocean Breeze</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#10303a;--ink-soft:#46616a;--sand:#f6f0e4;--sand-deep:#ece2cf;
+    --teal-deep:#0a3744;--teal:#11697f;--azure:#1ba6c6;--azure-light:#46c4dd;
+    --gold:#c39a45;--gold-deep:#a67f2e;--line:rgba(16,48,58,.13);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--sand);color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:860px;margin:0 auto}
+  .serif{font-family:"Cormorant Garamond",Georgia,serif}
+
+  .topbar{background:var(--teal-deep);color:#eef6f7}
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 22px}
+  .mark{display:flex;align-items:center;gap:9px;font-size:12.5px;letter-spacing:.16em;
+    text-transform:uppercase;font-weight:600}
+  .mark svg{width:18px;height:18px;stroke:var(--azure-light);fill:none;stroke-width:1.7}
+  .toggle{display:flex;border:1px solid rgba(255,255,255,.3);border-radius:999px;overflow:hidden}
+  .toggle button{background:transparent;color:#cfe6ea;border:0;cursor:pointer;font-family:inherit;
+    font-size:12px;font-weight:600;letter-spacing:.1em;padding:6px 14px}
+  .toggle button.on{background:var(--azure);color:#06262f}
+
+  .hero{position:relative;overflow:hidden;color:#f3fbfc;
+    background:linear-gradient(165deg,var(--teal-deep) 0%,var(--teal) 46%,var(--azure) 100%)}
+  .hero .wrap{position:relative;z-index:2;padding:48px 22px 92px}
+  .eyebrow{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--azure-light);
+    font-weight:600;margin:0 0 16px}
+  .hero h1{font-weight:600;font-size:clamp(30px,5.4vw,52px);line-height:1.05;margin:0;
+    letter-spacing:-.01em;max-width:17ch}
+  .hero h1 em{font-style:italic;color:#ffe6ad}
+  .hook{display:flex;align-items:baseline;gap:16px;margin:34px 0 0;flex-wrap:wrap}
+  .hook .fig{font-family:"Cormorant Garamond",serif;font-weight:700;
+    font-size:clamp(60px,13vw,110px);line-height:.82;color:#fff}
+  .hook .cap{font-size:14.5px;color:#dff1f4;max-width:26ch}
+  .hook .cap b{color:#ffe6ad;font-weight:600}
+  .glow{position:absolute;z-index:0;top:-25%;right:-12%;width:480px;height:480px;
+    background:radial-gradient(circle,rgba(70,196,221,.5),transparent 62%);pointer-events:none}
+  .sea{position:absolute;inset:auto 0 0 0;z-index:1;line-height:0}
+  .sea svg{width:100%;height:auto;display:block}
+
+  .facts{max-width:860px;margin:-46px auto 0;position:relative;z-index:5;padding:0 22px}
+  .facts-card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;
+    box-shadow:0 26px 54px -28px rgba(10,55,68,.42)}
+  .fact{display:flex;gap:18px;padding:22px 26px;border-top:1px solid var(--line)}
+  .fact:first-child{border-top:0}
+  .fact .n{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:30px;
+    color:var(--gold-deep);line-height:1;min-width:34px}
+  .fact h2{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:21px;
+    margin:2px 0 5px;letter-spacing:-.01em;line-height:1.12}
+  .fact p{margin:0;font-size:14.5px;color:var(--ink-soft)}
+  .fact p b{color:var(--ink);font-weight:600}
+  .fact p .big{color:var(--gold-deep);font-weight:700}
+
+  .cta{margin-top:26px;color:#eef9fb;
+    background:linear-gradient(120deg,var(--teal-deep),var(--teal))}
+  .cta .wrap{padding:30px 22px;display:flex;align-items:center;justify-content:space-between;
+    gap:22px;flex-wrap:wrap}
+  .cta .price{display:flex;align-items:baseline;gap:9px}
+  .cta .price .p{font-family:"Cormorant Garamond",serif;font-size:50px;font-weight:700;
+    line-height:.9;color:#fff}
+  .cta .price .per{font-size:13px;color:#bfe2e8}
+  .cta .terms{font-size:13.5px;color:#d6edf0;max-width:26ch}
+  .cta .terms b{color:#ffe6ad;font-weight:600}
+  .cta a.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:var(--gold);
+    color:#2a200a;font-weight:700;font-size:13.5px;padding:13px 20px;border-radius:999px;white-space:nowrap}
+  .cta a.btn svg{width:15px;height:15px;stroke:#2a200a;fill:none;stroke-width:2}
+  .cta a.btn:hover{background:#d9b259}
+  footer.fine{padding:18px 22px;text-align:center;font-size:11.5px;color:#8a9aa0}
+
+  span[data-lang]{display:none}
+  body.es span[data-lang="es"],body.en span[data-lang="en"]{display:inline}
+  h1[data-lang],h2[data-lang]{display:none}
+  body.es h1[data-lang="es"],body.es h2[data-lang="es"]{display:block}
+  body.en h1[data-lang="en"],body.en h2[data-lang="en"]{display:block}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+  @media (max-width:620px){
+    .cta .wrap{flex-direction:column;align-items:flex-start}
+    .fact{padding:18px 20px}
+  }
+  @media print{.topbar{position:static}.cta a.btn{display:none}
+    .hero,.cta{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{background:#fff}}
+</style>
+</head>
+<body class="es">
+
+  <div class="topbar"><div class="wrap">
+    <div class="mark">
+      <svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M2 16c2 0 2-1.6 4-1.6S8 16 10 16s2-1.6 4-1.6S16 16 18 16s2-1.6 4-1.6"/><path d="M2 11c2 0 2-1.6 4-1.6S8 11 10 11s2-1.6 4-1.6S16 11 18 11s2-1.6 4-1.6"/></svg>
+      Ocean Breeze · Concierge
+    </div>
+    <div class="toggle" role="group" aria-label="Language">
+      <button id="btn-es" class="on" onclick="setLang('es')">ES</button>
+      <button id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+  </div></div>
+
+  <header class="hero">
+    <div class="glow"></div>
+    <div class="wrap">
+      <p class="eyebrow">
+        <span data-lang="es">Reservas directas para hoteles boutique</span>
+        <span data-lang="en">Direct bookings for boutique hotels</span>
+      </p>
+      <h1 data-lang="es" class="serif">Recupera lo que Booking se lleva <em>cada temporada</em>.</h1>
+      <h1 data-lang="en" class="serif">Recover what Booking takes <em>every season</em>.</h1>
+      <div class="hook">
+        <div class="fig">$18,000</div>
+        <div class="cap">
+          <span data-lang="es">de vuelta en una temporada alta. <b>Un carro.</b> Por una herramienta de $300 al mes.</span>
+          <span data-lang="en">back in a single high season. <b>A car.</b> From a $300-a-month tool.</span>
+        </div>
+      </div>
+    </div>
+    <div class="sea" aria-hidden="true">
+      <svg viewBox="0 0 1440 110" preserveAspectRatio="none">
+        <path d="M0,60 C240,104 480,18 720,48 C960,78 1200,110 1440,66 L1440,110 L0,110 Z" fill="#f6f0e4"/>
+        <path d="M0,76 C240,112 480,42 720,68 C960,94 1200,120 1440,84 L1440,110 L0,110 Z" fill="#ece2cf" opacity=".7"/>
+      </svg>
+    </div>
+  </header>
+
+  <section class="facts"><div class="facts-card">
+
+    <div class="fact">
+      <span class="n">01</span>
+      <div>
+        <h2 data-lang="es" class="serif">La temporada alta dura 6 meses</h2>
+        <h2 data-lang="en" class="serif">High season runs 6 months</h2>
+        <p>
+          <span data-lang="es">De septiembre a febrero, a casa llena, pierdes hasta <b>$6,000 al mes</b> en comisiones por ~18 plataformas — <span class="big">$36,000 en la temporada</span>.</span>
+          <span data-lang="en">September to February, at full house, you lose up to <b>$6,000 a month</b> to commissions across ~18 platforms — <span class="big">$36,000 a season</span>.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="fact">
+      <span class="n">02</span>
+      <div>
+        <h2 data-lang="es" class="serif">Reservando directo, recuperas la mitad</h2>
+        <h2 data-lang="en" class="serif">Booking direct, you keep half</h2>
+        <p>
+          <span data-lang="es">El bot reserva directo y te devuelve <span class="big">hasta $18,000</span> por temporada. La herramienta cuesta <b>$300 al mes</b>.</span>
+          <span data-lang="en">The bot books direct and gives you back <span class="big">up to $18,000</span> a season. The tool costs <b>$300 a month</b>.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="fact">
+      <span class="n">03</span>
+      <div>
+        <h2 data-lang="es" class="serif">Respondes al instante, 24/7</h2>
+        <h2 data-lang="en" class="serif">You answer instantly, 24/7</h2>
+        <p>
+          <span data-lang="es">En español e inglés. El que contesta primero <b>gana la reserva</b>, las OTAs te suben en el ranking, y mejores reseñas suben tu tarifa — <b>Cornell: +1 punto ≈ +11%</b>.</span>
+          <span data-lang="en">In Spanish and English. The first to reply <b>wins the booking</b>, OTAs rank you higher, and better reviews lift your rate — <b>Cornell: +1 point ≈ +11%</b>.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="fact">
+      <span class="n">04</span>
+      <div>
+        <h2 data-lang="es" class="serif">El huésped es tuyo, no de Booking</h2>
+        <h2 data-lang="en" class="serif">The guest is yours, not Booking's</h2>
+        <p>
+          <span data-lang="es">Sus datos quedan en <b>tu base de datos privada</b>: la próxima vez reservan directo, sin comisión. Y captas su queja en privado <b>antes</b> de que sea una estrella menos en Google.</span>
+          <span data-lang="en">Their details stay in <b>your private database</b>: next time they book direct, no commission. And you catch a complaint privately <b>before</b> it becomes one less star on Google.</span>
+        </p>
+      </div>
+    </div>
+
+  </div></section>
+
+  <section class="cta"><div class="wrap">
+    <div class="price"><span class="p">$300</span>
+      <span class="per"><span data-lang="es">/ mes</span><span data-lang="en">/ month</span></span></div>
+    <div class="terms">
+      <span data-lang="es"><b>10 días gratis</b>, luego $300/mes. Sin contratos largos.</span>
+      <span data-lang="en"><b>10 days free</b>, then $300/month. No long contracts.</span>
+    </div>
+    <a class="btn" href="https://andreytry.github.io/hotel-concierge-demo/" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      <span data-lang="es">Ver la demo</span><span data-lang="en">See the demo</span>
+    </a>
+  </div></section>
+
+  <footer class="fine">
+    <span data-lang="es">Ocean Breeze Studios · Concierge de Reservas Directas · Zona Colonial, Santo Domingo</span>
+    <span data-lang="en">Ocean Breeze Studios · Direct Booking Concierge · Zona Colonial, Santo Domingo</span>
+  </footer>
+
+<script>
+  function setLang(l){
+    document.body.classList.remove('es','en');document.body.classList.add(l);
+    document.documentElement.lang=l;
+    document.getElementById('btn-es').classList.toggle('on',l==='es');
+    document.getElementById('btn-en').classList.toggle('on',l==='en');
+  }
+</script>
+</body>
+</html>
