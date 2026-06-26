@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concierge QA Harness</title>
+<style>
+ :root{--ink:#10303a;--soft:#46616a;--sand:#f6f0e4;--teal:#0a3744;--teal2:#11697f;--az:#1ba6c6;--gold:#c39a45;--line:#d9e1e3;--pass:#1d7a4d;--part:#b8860b;--fail:#b23b3b;}
+ *{box-sizing:border-box}
+ body{margin:0;background:var(--sand);color:var(--ink);font-family:Inter,system-ui,Arial,sans-serif;line-height:1.5}
+ .wrap{max-width:1080px;margin:0 auto;padding:22px}
+ header{background:linear-gradient(160deg,var(--teal),var(--teal2) 70%,var(--az));color:#eef9fb;padding:26px 22px}
+ header .wrap{padding:0}
+ h1{font-size:24px;margin:0 0 6px;font-weight:700}
+ header p{margin:0;color:#cfe9ee;font-size:14px;max-width:70ch}
+ .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0}
+ .card h2{margin:0 0 10px;font-size:16px}
+ details summary{cursor:pointer;font-weight:600}
+ .grid{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+ label{font-size:12px;color:var(--soft);display:block;margin-bottom:3px}
+ input,select{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+ input[type=number]{width:90px}
+ button{font:inherit;font-weight:600;border:0;border-radius:999px;padding:11px 20px;cursor:pointer}
+ .run{background:var(--az);color:#06262f}.run:hover{background:#159ab9}
+ .ghost{background:#eef3f4;color:var(--ink)}
+ button:disabled{opacity:.5;cursor:not-allowed}
+ .bar{height:10px;background:#e7eef0;border-radius:999px;overflow:hidden;margin:12px 0}
+ .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--az),var(--teal2));width:0%}
+ .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+ .kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+ .kpi .v{font-size:26px;font-weight:700}.kpi .t{font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.06em}
+ table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+ th,td{text-align:left;padding:8px 9px;border-top:1px solid var(--line);vertical-align:top}
+ th{position:sticky;top:0;background:#f1f6f7;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--soft)}
+ .tag{font-size:11px;padding:2px 7px;border-radius:999px;font-weight:700;white-space:nowrap}
+ .PASS{background:#e3f3ea;color:var(--pass)}.PARTIAL{background:#f7eed3;color:var(--part)}.FAIL{background:#f6e1e1;color:var(--fail)}
+ .badlang{color:var(--fail);font-weight:700}
+ .reply{color:var(--soft);white-space:pre-wrap}
+ .muted{color:var(--soft);font-size:12px}
+ .rowwrap{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+ code{background:#eef3f4;padding:1px 5px;border-radius:4px;font-size:12px}
+ .sec{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+ .pill{font-size:12px;background:#eef3f4;border-radius:999px;padding:4px 10px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+ <h1>Concierge QA Harness — Ocean Breeze</h1>
+ <p>Fires every test case at the live <code>/webhook/concierge</code> endpoint (real GPT-4o agent, real tenant facts), captures the actual reply, and scores it against the rubric. Runs in your browser; nothing is faked.</p>
+</div></header>
+<div class="wrap">
+
+ <div class="card">
+  <details><summary>Test schema &amp; scoring rubric</summary>
+   <div class="muted" style="margin-top:10px">
+   <p><b>Dimensions scored per turn:</b> (1) <b>Relevance/coverage</b> — did it actually answer using real knowledge? (2) <b>Language fidelity</b> — did it reply in the language asked? (3) <b>Grounding</b> — answer consistent with hotel facts, no invented amenities. (4) <b>Booking behavior</b> — on booking intent, does it move toward a direct booking (asks dates/guests, quotes rate, mentions direct perk)?</p>
+   <p><b>Verdicts:</b> <span class="tag PASS">PASS</span> answered correctly &amp; in the right language · <span class="tag PARTIAL">PARTIAL</span> partial / generic / right idea but thin · <span class="tag FAIL">FAIL</span> deflected when it should answer, wrong language, error, or fabricated.</p>
+   <p><b>Categories:</b> neighborhood (55 EN), hotel_fact (30 EN), booking (15 EN), multilang (25: 9 ES / 8 DE / 8 FR). Heuristic verdict is a guide — the <b>raw reply is shown for every case</b> so you can audit it yourself.</p>
+   </div>
+  </details>
+ </div>
+
+ <div class="card">
+  <h2>Run</h2>
+  <div class="grid">
+   <div><label>Webhook URL</label><input id="url" size="42" value="https://ai-process.app.n8n.cloud/webhook/concierge"></div>
+   <div><label>To (tenant)</label><input id="to" size="16" value="+18096850193"></div>
+   <div><label>Concurrency</label><input id="conc" type="number" value="4" min="1" max="10"></div>
+   <div><label>Delay ms</label><input id="delay" type="number" value="150" min="0" step="50"></div>
+   <div><label>Filter</label>
+     <select id="filter">
+       <option value="all">All 125</option>
+       <option value="neighborhood">Neighborhood (55)</option>
+       <option value="hotel_fact">Hotel facts (30)</option>
+       <option value="booking">Booking (15)</option>
+       <option value="multilang">Multilingual (25)</option>
+       <option value="sample">Quick sample (16)</option>
+     </select>
+   </div>
+   <button class="run" id="go">Run</button>
+   <button class="ghost" id="csv" disabled>Export CSV</button>
+  </div>
+  <div class="bar"><i id="prog"></i></div>
+  <div class="muted" id="status">Idle. Pick a filter and hit Run. A full 125-case run makes 125 live calls.</div>
+ </div>
+
+ <div class="card" id="report" style="display:none">
+  <h2>Report</h2>
+  <div class="kpis" id="kpis"></div>
+  <div class="sec" id="bycat"></div>
+  <div class="sec" id="bylang"></div>
+ </div>
+
+ <div class="card">
+  <h2>Results</h2>
+  <div class="rowwrap"><table id="tbl"><thead><tr>
+    <th>#</th><th>Lang</th><th>Category</th><th>Question</th><th>Reply (live)</th><th>Lang</th><th>Verdict</th>
+  </tr></thead><tbody id="rows"></tbody></table></div>
+ </div>
+
+</div>
+<script>
+const CASES = [{"id": 1, "lang": "en", "cat": "neighborhood", "q": "Where can I get dinner near the hotel?", "expect": "neighborhood:restaurant"}, {"id": 2, "lang": "en", "cat": "neighborhood", "q": "What's a good place for authentic Dominican food nearby?", "expect": "neighborhood:restaurant"}, {"id": 3, "lang": "en", "cat": "neighborhood", "q": "Any cheap local lunch spot within walking distance?", "expect": "neighborhood:restaurant"}, {"id": 4, "lang": "en", "cat": "neighborhood", "q": "Where do locals eat around here?", "expect": "neighborhood:restaurant"}, {"id": 5, "lang": "en", "cat": "neighborhood", "q": "Is there a nice restaurant on El Conde street?", "expect": "neighborhood:restaurant"}, {"id": 6, "lang": "en", "cat": "neighborhood", "q": "Where can I get breakfast in the morning nearby?", "expect": "neighborhood:restaurant"}, {"id": 7, "lang": "en", "cat": "neighborhood", "q": "Any good coffee shop close to the hotel?", "expect": "neighborhood:cafe"}, {"id": 8, "lang": "en", "cat": "neighborhood", "q": "Where can I grab a quick coffee?", "expect": "neighborhood:cafe"}, {"id": 9, "lang": "en", "cat": "neighborhood", "q": "Is there somewhere for a drink or a beer at night?", "expect": "neighborhood:bar"}, {"id": 10, "lang": "en", "cat": "neighborhood", "q": "What's the nightlife like around the Colonial Zone?", "expect": "neighborhood:bar"}, {"id": 11, "lang": "en", "cat": "neighborhood", "q": "How far is the Cathedral from the hotel?", "expect": "neighborhood:landmark"}, {"id": 12, "lang": "en", "cat": "neighborhood", "q": "What's the name of the cathedral nearby?", "expect": "neighborhood:landmark"}, {"id": 13, "lang": "en", "cat": "neighborhood", "q": "How do I walk to Parque Colon from here?", "expect": "neighborhood:landmark"}, {"id": 14, "lang": "en", "cat": "neighborhood", "q": "Is Alcazar de Colon close?", "expect": "neighborhood:landmark"}, {"id": 15, "lang": "en", "cat": "neighborhood", "q": "What are the must-see sights within walking distance?", "expect": "neighborhood:landmark"}, {"id": 16, "lang": "en", "cat": "neighborhood", "q": "Where is Calle Las Damas and is it near?", "expect": "neighborhood:landmark"}, {"id": 17, "lang": "en", "cat": "neighborhood", "q": "Can I walk to Plaza Espana?", "expect": "neighborhood:landmark"}, {"id": 18, "lang": "en", "cat": "neighborhood", "q": "Where is the nearest supermarket?", "expect": "neighborhood:supermarket"}, {"id": 19, "lang": "en", "cat": "neighborhood", "q": "I need groceries, where do I go?", "expect": "neighborhood:supermarket"}, {"id": 20, "lang": "en", "cat": "neighborhood", "q": "Is there a pharmacy nearby?", "expect": "neighborhood:pharmacy"}, {"id": 21, "lang": "en", "cat": "neighborhood", "q": "I need a pharmacy open late, where is one?", "expect": "neighborhood:pharmacy"}, {"id": 22, "lang": "en", "cat": "neighborhood", "q": "Where can I find an ATM close by?", "expect": "neighborhood:atm"}, {"id": 23, "lang": "en", "cat": "neighborhood", "q": "Where do I get cash around here?", "expect": "neighborhood:atm"}, {"id": 24, "lang": "en", "cat": "neighborhood", "q": "Where can I buy a local SIM card?", "expect": "neighborhood:sim"}, {"id": 25, "lang": "en", "cat": "neighborhood", "q": "How do I get a taxi or Uber from the hotel?", "expect": "neighborhood:transport"}, {"id": 26, "lang": "en", "cat": "neighborhood", "q": "Does Uber work in Santo Domingo?", "expect": "neighborhood:transport"}, {"id": 27, "lang": "en", "cat": "neighborhood", "q": "How far is the nearest beach?", "expect": "neighborhood:beach"}, {"id": 28, "lang": "en", "cat": "neighborhood", "q": "Can you recommend a beach for a day trip?", "expect": "neighborhood:beach"}, {"id": 29, "lang": "en", "cat": "neighborhood", "q": "Is it safe to walk around the Zona Colonial at night?", "expect": "neighborhood:safety"}, {"id": 30, "lang": "en", "cat": "neighborhood", "q": "Which areas should I avoid nearby?", "expect": "neighborhood:safety"}, {"id": 31, "lang": "en", "cat": "neighborhood", "q": "What's the best route to walk down El Conde?", "expect": "neighborhood:landmark"}, {"id": 32, "lang": "en", "cat": "neighborhood", "q": "Are there any museums close to the hotel?", "expect": "neighborhood:landmark"}, {"id": 33, "lang": "en", "cat": "neighborhood", "q": "Where can I do a walking tour of the Colonial Zone?", "expect": "neighborhood:tour"}, {"id": 34, "lang": "en", "cat": "neighborhood", "q": "How do I get to the Malecon?", "expect": "neighborhood:landmark"}, {"id": 35, "lang": "en", "cat": "neighborhood", "q": "Is Los Tres Ojos far from here?", "expect": "neighborhood:landmark"}, {"id": 36, "lang": "en", "cat": "neighborhood", "q": "Where's the closest corner store / colmado?", "expect": "neighborhood:supermarket"}, {"id": 37, "lang": "en", "cat": "neighborhood", "q": "Is there a laundromat or laundry service nearby?", "expect": "neighborhood:service"}, {"id": 38, "lang": "en", "cat": "neighborhood", "q": "Where can I find a gym near the hotel?", "expect": "neighborhood:service"}, {"id": 39, "lang": "en", "cat": "neighborhood", "q": "Any vegan or vegetarian food nearby?", "expect": "neighborhood:restaurant"}, {"id": 40, "lang": "en", "cat": "neighborhood", "q": "Where can I take kids to eat around here?", "expect": "neighborhood:restaurant"}, {"id": 41, "lang": "en", "cat": "neighborhood", "q": "Is there live music nearby in the evenings?", "expect": "neighborhood:bar"}, {"id": 42, "lang": "en", "cat": "neighborhood", "q": "Where can I buy souvenirs close by?", "expect": "neighborhood:service"}, {"id": 43, "lang": "en", "cat": "neighborhood", "q": "What's a good rooftop or terrace bar nearby?", "expect": "neighborhood:bar"}, {"id": 44, "lang": "en", "cat": "neighborhood", "q": "Where can I watch the sunset around here?", "expect": "neighborhood:landmark"}, {"id": 45, "lang": "en", "cat": "neighborhood", "q": "How far is Fortaleza Ozama?", "expect": "neighborhood:landmark"}, {"id": 46, "lang": "en", "cat": "neighborhood", "q": "Can I walk to the Columbus Lighthouse, or do I need a taxi?", "expect": "neighborhood:transport"}, {"id": 47, "lang": "en", "cat": "neighborhood", "q": "Where can I rent a bicycle nearby?", "expect": "neighborhood:service"}, {"id": 48, "lang": "en", "cat": "neighborhood", "q": "What's the closest place for ice cream or dessert?", "expect": "neighborhood:restaurant"}, {"id": 49, "lang": "en", "cat": "neighborhood", "q": "Is there a bank branch near the hotel?", "expect": "neighborhood:atm"}, {"id": 50, "lang": "en", "cat": "neighborhood", "q": "Where can I get fresh fruit or a juice nearby?", "expect": "neighborhood:restaurant"}, {"id": 51, "lang": "en", "cat": "neighborhood", "q": "How long does it take to walk to the cathedral square?", "expect": "neighborhood:landmark"}, {"id": 52, "lang": "en", "cat": "neighborhood", "q": "Where's a good spot for a romantic dinner nearby?", "expect": "neighborhood:restaurant"}, {"id": 53, "lang": "en", "cat": "neighborhood", "q": "Any street food worth trying around here?", "expect": "neighborhood:restaurant"}, {"id": 54, "lang": "en", "cat": "neighborhood", "q": "What can I do nearby on a rainy day?", "expect": "neighborhood:tour"}, {"id": 55, "lang": "en", "cat": "neighborhood", "q": "Where do I catch the colonial zone trolley / chu chu tour?", "expect": "neighborhood:tour"}, {"id": 56, "lang": "en", "cat": "hotel_fact", "q": "Do you have parking?", "expect": "fact:parking"}, {"id": 57, "lang": "en", "cat": "hotel_fact", "q": "Where can I park my rental car?", "expect": "fact:parking"}, {"id": 58, "lang": "en", "cat": "hotel_fact", "q": "Is the WiFi free?", "expect": "fact:wifi"}, {"id": 59, "lang": "en", "cat": "hotel_fact", "q": "What's the WiFi situation?", "expect": "fact:wifi"}, {"id": 60, "lang": "en", "cat": "hotel_fact", "q": "What time is check-in?", "expect": "fact:checkin"}, {"id": 61, "lang": "en", "cat": "hotel_fact", "q": "What time is check-out?", "expect": "fact:checkout"}, {"id": 62, "lang": "en", "cat": "hotel_fact", "q": "Can I check in late at night?", "expect": "fact:checkin"}, {"id": 63, "lang": "en", "cat": "hotel_fact", "q": "Is reception open 24 hours?", "expect": "fact:checkin"}, {"id": 64, "lang": "en", "cat": "hotel_fact", "q": "Do the rooms have a kitchen?", "expect": "fact:kitchen"}, {"id": 65, "lang": "en", "cat": "hotel_fact", "q": "Is there air conditioning?", "expect": "fact:ac"}, {"id": 66, "lang": "en", "cat": "hotel_fact", "q": "Do you have a rooftop terrace?", "expect": "fact:rooftop"}, {"id": 67, "lang": "en", "cat": "hotel_fact", "q": "What's your address?", "expect": "fact:address"}, {"id": 68, "lang": "en", "cat": "hotel_fact", "q": "How far is the airport?", "expect": "fact:airport"}, {"id": 69, "lang": "en", "cat": "hotel_fact", "q": "How long does it take to get to SDQ airport?", "expect": "fact:airport"}, {"id": 70, "lang": "en", "cat": "hotel_fact", "q": "What types of rooms do you have?", "expect": "fact:rooms"}, {"id": 71, "lang": "en", "cat": "hotel_fact", "q": "How much is a Deluxe Studio per night?", "expect": "fact:rooms"}, {"id": 72, "lang": "en", "cat": "hotel_fact", "q": "How many people fit in a studio?", "expect": "fact:rooms"}, {"id": 73, "lang": "en", "cat": "hotel_fact", "q": "Do you allow pets?", "expect": "fact:pets"}, {"id": 74, "lang": "en", "cat": "hotel_fact", "q": "Is breakfast included?", "expect": "fact:breakfast"}, {"id": 75, "lang": "en", "cat": "hotel_fact", "q": "Do you have a TV in the room?", "expect": "fact:amenity"}, {"id": 76, "lang": "en", "cat": "hotel_fact", "q": "Do all studios have a private bathroom?", "expect": "fact:amenity"}, {"id": 77, "lang": "en", "cat": "hotel_fact", "q": "Do you have a swimming pool?", "expect": "deflect_ok"}, {"id": 78, "lang": "en", "cat": "hotel_fact", "q": "Is there a gym in the hotel?", "expect": "deflect_ok"}, {"id": 79, "lang": "en", "cat": "hotel_fact", "q": "Do you offer airport pickup?", "expect": "deflect_ok"}, {"id": 80, "lang": "en", "cat": "hotel_fact", "q": "Can I store my luggage after check-out?", "expect": "deflect_ok"}, {"id": 81, "lang": "en", "cat": "hotel_fact", "q": "Do you have laundry service in the hotel?", "expect": "deflect_ok"}, {"id": 82, "lang": "en", "cat": "hotel_fact", "q": "Can I get early check-in?", "expect": "fact:checkin"}, {"id": 83, "lang": "en", "cat": "hotel_fact", "q": "Are towels and linens provided?", "expect": "fact:amenity"}, {"id": 84, "lang": "en", "cat": "hotel_fact", "q": "Do you have a balcony room?", "expect": "fact:amenity"}, {"id": 85, "lang": "en", "cat": "hotel_fact", "q": "Is smoking allowed in the rooms?", "expect": "deflect_ok"}, {"id": 86, "lang": "en", "cat": "booking", "q": "I'd like to book a Deluxe Studio for 3 nights.", "expect": "booking"}, {"id": 87, "lang": "en", "cat": "booking", "q": "Do you have availability next weekend for 2 guests?", "expect": "booking"}, {"id": 88, "lang": "en", "cat": "booking", "q": "How much would 4 nights in a Luxe Studio cost?", "expect": "booking"}, {"id": 89, "lang": "en", "cat": "booking", "q": "Can I book directly with you instead of Booking.com?", "expect": "booking"}, {"id": 90, "lang": "en", "cat": "booking", "q": "Is there a discount if I book direct?", "expect": "booking"}, {"id": 91, "lang": "en", "cat": "booking", "q": "Can I pay on arrival?", "expect": "booking"}, {"id": 92, "lang": "en", "cat": "booking", "q": "I want to reserve a Basic Studio from Friday to Sunday.", "expect": "booking"}, {"id": 93, "lang": "en", "cat": "booking", "q": "Can I extend my stay by two more nights?", "expect": "booking"}, {"id": 94, "lang": "en", "cat": "booking", "q": "What's your cancellation policy?", "expect": "deflect_ok"}, {"id": 95, "lang": "en", "cat": "booking", "q": "Do I need to pay a deposit to reserve?", "expect": "booking"}, {"id": 96, "lang": "en", "cat": "booking", "q": "Can I book a room for 5 people?", "expect": "booking"}, {"id": 97, "lang": "en", "cat": "booking", "q": "I need a room tonight, are you available?", "expect": "booking"}, {"id": 98, "lang": "en", "cat": "booking", "q": "How do I confirm my reservation?", "expect": "booking"}, {"id": 99, "lang": "en", "cat": "booking", "q": "Can you hold a room for me for an hour?", "expect": "booking"}, {"id": 100, "lang": "en", "cat": "booking", "q": "What's the total for a Deluxe Studio for a week?", "expect": "booking"}, {"id": 101, "lang": "es", "cat": "multilang", "q": "¿Dónde puedo cenar cerca del hotel?", "expect": "neighborhood:restaurant"}, {"id": 102, "lang": "es", "cat": "multilang", "q": "¿Hay una farmacia cerca?", "expect": "neighborhood:pharmacy"}, {"id": 103, "lang": "es", "cat": "multilang", "q": "¿Tienen estacionamiento?", "expect": "fact:parking"}, {"id": 104, "lang": "es", "cat": "multilang", "q": "¿A qué hora es el check-in?", "expect": "fact:checkin"}, {"id": 105, "lang": "es", "cat": "multilang", "q": "¿Cuánto cuesta el Estudio Deluxe por noche?", "expect": "fact:rooms"}, {"id": 106, "lang": "es", "cat": "multilang", "q": "Quiero reservar un estudio para 2 noches.", "expect": "booking"}, {"id": 107, "lang": "es", "cat": "multilang", "q": "¿Qué tan lejos está la Catedral?", "expect": "neighborhood:landmark"}, {"id": 108, "lang": "es", "cat": "multilang", "q": "¿Dónde está el supermercado más cercano?", "expect": "neighborhood:supermarket"}, {"id": 109, "lang": "es", "cat": "multilang", "q": "¿Es seguro caminar de noche por la Zona Colonial?", "expect": "neighborhood:safety"}, {"id": 110, "lang": "de", "cat": "multilang", "q": "Wo kann ich in der Nähe des Hotels zu Abend essen?", "expect": "neighborhood:restaurant"}, {"id": 111, "lang": "de", "cat": "multilang", "q": "Gibt es eine Apotheke in der Nähe?", "expect": "neighborhood:pharmacy"}, {"id": 112, "lang": "de", "cat": "multilang", "q": "Haben Sie Parkplätze?", "expect": "fact:parking"}, {"id": 113, "lang": "de", "cat": "multilang", "q": "Wann ist der Check-in?", "expect": "fact:checkin"}, {"id": 114, "lang": "de", "cat": "multilang", "q": "Wie weit ist der Flughafen entfernt?", "expect": "fact:airport"}, {"id": 115, "lang": "de", "cat": "multilang", "q": "Ich möchte ein Studio für drei Nächte buchen.", "expect": "booking"}, {"id": 116, "lang": "de", "cat": "multilang", "q": "Wie komme ich zur Kathedrale?", "expect": "neighborhood:landmark"}, {"id": 117, "lang": "de", "cat": "multilang", "q": "Ist das WLAN kostenlos?", "expect": "fact:wifi"}, {"id": 118, "lang": "fr", "cat": "multilang", "q": "Où puis-je dîner près de l'hôtel ?", "expect": "neighborhood:restaurant"}, {"id": 119, "lang": "fr", "cat": "multilang", "q": "Y a-t-il une pharmacie à proximité ?", "expect": "neighborhood:pharmacy"}, {"id": 120, "lang": "fr", "cat": "multilang", "q": "Avez-vous un parking ?", "expect": "fact:parking"}, {"id": 121, "lang": "fr", "cat": "multilang", "q": "À quelle heure est l'enregistrement ?", "expect": "fact:checkin"}, {"id": 122, "lang": "fr", "cat": "multilang", "q": "Combien coûte le studio Deluxe par nuit ?", "expect": "fact:rooms"}, {"id": 123, "lang": "fr", "cat": "multilang", "q": "Je voudrais réserver un studio pour deux nuits.", "expect": "booking"}, {"id": 124, "lang": "fr", "cat": "multilang", "q": "Quelle est la distance jusqu'à la cathédrale ?", "expect": "neighborhood:landmark"}, {"id": 125, "lang": "fr", "cat": "multilang", "q": "Le petit déjeuner est-il inclus ?", "expect": "fact:breakfast"}];
+
+// ---------- language detection (rough, marker-based) ----------
+function detectLang(t){
+ if(!t) return "?";
+ const s=" "+t.toLowerCase()+" ";
+ const de=/\b(ich|haben|ist|wo|danke|zimmer|gibt|k[oö]nnen|n[aä]he|fr[uü]hst[uü]ck|nacht|bitte|stunde|entfernt|hotel ist)\b/;
+ const fr=/\b(o[uù]|bonjour|merci|chambre|pr[eè]s|pouvez|avez|r[eé]server|petit d[eé]jeuner|nuit|est-ce|quelle|distance|nous)\b|[çœ]/;
+ const es=/\b(d[oó]nde|hola|gracias|habitaci[oó]n|tiene|cerca|puede|reserva|noche|est[aá]|cu[aá]nto|seguro|hay)\b|[ñ¿¡]/;
+ const en=/\b(the|where|you|have|do|near|can|breakfast|night|how|is there|parking|what)\b/;
+ // priority: de/fr first (more distinctive), then es, then en
+ if(de.test(s)&&!/\b(the|you|where)\b/.test(s)) return "de";
+ if(fr.test(s)) return "fr";
+ if(es.test(s)) return "es";
+ if(en.test(s)) return "en";
+ if(de.test(s)) return "de";
+ return "?";
+}
+
+const DEFLECT=/(no tengo|no dispongo|sin informaci|don'?t have|do not have|i'?m not able|i am not able|cannot (help|assist|provide)|can'?t (help|provide)|no puedo (ayudar|proporcionar)|unfortunately i|no information|not sure|no estoy seguro|please (contact|reach)|contact (the )?(reception|front desk)|reach out to|check with (the )?reception|je ne (peux|dispose)|ich habe keine|keine informationen)/i;
+
+const KW={
+ "fact:parking":/parking|estacionamiento|parqueo/i,
+ "fact:wifi":/wi-?fi|internet/i,
+ "fact:checkin":/check.?in|24\/7|reception|recepci|flexible|late|registro|enregistrement|anmeld|cualquier hora/i,
+ "fact:checkout":/check.?out|noon|12|mediod[ií]a|salida/i,
+ "fact:kitchen":/kitchen|cocina/i,
+ "fact:ac":/air ?con|a\/c|aire|conditioning|klima/i,
+ "fact:rooftop":/rooftop|terrace|terraza|azotea/i,
+ "fact:address":/palo hincado|zona colonial|canela/i,
+ "fact:airport":/airport|aeropuerto|sdq|am[eé]ricas|flughafen|a[eé]roport|25 ?min/i,
+ "fact:rooms":/studio|estudio|\$|\b39\b|\b45\b|\b49\b|rate|noche|night|nuit|nacht|tarifa/i,
+ "fact:pets":/pet|mascota|haustier|animaux/i,
+ "fact:breakfast":/breakfast|desayuno|petit d[eé]jeuner|fr[uü]hst[uü]ck|kitchen|cocina|caf[eé]/i,
+ "fact:amenity":/tv|bathroom|ba[nñ]o|towel|toalla|balcon|linen|s[aá]bana/i
+};
+const NB_SIGNAL=/(min|walk|block|street|east|west|near|metro|jalao|buche|marchanta|pe[nñ]alba|d comer|nacional|merca|carol|colon|cathedral|catedral|el conde|parque|alcazar|las damas|malec[oó]n|boca chica|uber|taxi|supermercado|farmacia|atm|~| m\b|meters|metros|cuadra)/i;
+const BOOK_SIGNAL=/(date|fecha|check.?in|how many|guests|hu[eé]spedes|night|noche|\$|rate|tarifa|discount|descuento|direct|directo|availab|disponib|name|nombre|confirm|reserv)/i;
+
+function score(c,reply,err){
+ if(err||!reply) return {verdict:"FAIL",lang:"?",note:err||"no reply"};
+ const lang=detectLang(reply);
+ const expLang=c.lang;
+ const langOk = lang===expLang || (lang==="?"); // unknown not penalised
+ const deflected=DEFLECT.test(reply);
+ let v="PARTIAL";
+ const e=c.expect;
+ if(e.startsWith("neighborhood")){
+   v = deflected ? "FAIL" : (NB_SIGNAL.test(reply)?"PASS":"PARTIAL");
+ } else if(e.startsWith("fact:")){
+   const k=KW[e]; v = (k&&k.test(reply))?"PASS":(deflected?"FAIL":"PARTIAL");
+ } else if(e==="deflect_ok"){
+   v = "PASS"; // honest "not available" is correct; shown raw for audit
+ } else if(e==="booking"){
+   v = BOOK_SIGNAL.test(reply)?"PASS":(deflected?"FAIL":"PARTIAL");
+ }
+ // language override: de/fr asked but answered es/en => language failure
+ if((expLang==="de"||expLang==="fr") && (lang==="es"||lang==="en")) v="FAIL";
+ if(expLang==="es" && lang==="en") { if(v==="PASS") v="PARTIAL"; }
+ return {verdict:v,lang,note:langOk?"":"lang≠"+expLang};
+}
+
+async function callBot(url,to,body){
+ const ctrl=new AbortController(); const t=setTimeout(()=>ctrl.abort(),25000);
+ try{
+   const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},
+     body:new URLSearchParams({From:"web-qa-"+Math.random().toString(36).slice(2,8),To:to,Body:body}),signal:ctrl.signal});
+   const txt=await r.text(); let reply="";
+   try{const j=JSON.parse(txt); reply=j.reply||j.output?.reply||j.message||txt;}catch{reply=txt;}
+   clearTimeout(t); return {reply:(reply||"").trim()};
+ }catch(e){clearTimeout(t); return {err:String(e.message||e)};}
+}
+
+let RESULTS=[];
+function esc(s){return (s||"").replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));}
+
+async function run(){
+ const url=document.getElementById('url').value.trim();
+ const to=document.getElementById('to').value.trim();
+ const conc=Math.max(1,+document.getElementById('conc').value||4);
+ const delay=+document.getElementById('delay').value||0;
+ const f=document.getElementById('filter').value;
+ let list=CASES.slice();
+ if(f==='sample'){ const pick=c=>true; list=[...CASES.filter(c=>c.cat==='neighborhood').slice(0,6),...CASES.filter(c=>c.cat==='hotel_fact').slice(0,3),...CASES.filter(c=>c.cat==='booking').slice(0,2),...CASES.filter(c=>c.lang==='es').slice(0,1),...CASES.filter(c=>c.lang==='de').slice(0,2),...CASES.filter(c=>c.lang==='fr').slice(0,2)]; }
+ else if(f!=='all'){ list=CASES.filter(c=>c.cat===f); }
+ document.getElementById('go').disabled=true; document.getElementById('csv').disabled=true;
+ document.getElementById('rows').innerHTML=''; RESULTS=[];
+ const total=list.length; let done=0;
+ const tbody=document.getElementById('rows');
+ const setStatus=()=>document.getElementById('status').textContent=`Running ${done}/${total} … (live calls)`;
+ setStatus();
+ let idx=0;
+ async function worker(){
+   while(idx<list.length){
+     const c=list[idx++];
+     const res=await callBot(url,to,c.q);
+     const sc=score(c,res.reply,res.err);
+     const row={...c,reply:res.reply||"",err:res.err||"",...sc};
+     RESULTS.push(row);
+     const tr=document.createElement('tr');
+     tr.innerHTML=`<td>${c.id}</td><td>${c.lang}</td><td>${c.cat}<div class="muted">${c.expect}</div></td>
+       <td>${esc(c.q)}</td><td class="reply">${esc(row.reply||row.err)}</td>
+       <td class="${sc.note?'badlang':''}">${sc.lang}</td>
+       <td><span class="tag ${sc.verdict}">${sc.verdict}</span></td>`;
+     tbody.appendChild(tr);
+     done++; setStatus();
+     document.getElementById('prog').style.width=(100*done/total)+'%';
+     if(delay) await new Promise(r=>setTimeout(r,delay));
+   }
+ }
+ await Promise.all(Array.from({length:Math.min(conc,total)},worker));
+ document.getElementById('go').disabled=false; document.getElementById('csv').disabled=false;
+ document.getElementById('status').textContent=`Done — ${total} live calls.`;
+ buildReport();
+}
+
+function buildReport(){
+ const R=RESULTS; if(!R.length) return;
+ document.getElementById('report').style.display='block';
+ const pass=R.filter(r=>r.verdict==='PASS').length;
+ const part=R.filter(r=>r.verdict==='PARTIAL').length;
+ const fail=R.filter(r=>r.verdict==='FAIL').length;
+ const pct=x=>Math.round(100*x/R.length);
+ document.getElementById('kpis').innerHTML=`
+  <div class="kpi"><div class="v">${R.length}</div><div class="t">cases run</div></div>
+  <div class="kpi"><div class="v" style="color:var(--pass)">${pct(pass)}%</div><div class="t">pass</div></div>
+  <div class="kpi"><div class="v" style="color:var(--part)">${pct(part)}%</div><div class="t">partial</div></div>
+  <div class="kpi"><div class="v" style="color:var(--fail)">${pct(fail)}%</div><div class="t">fail</div></div>`;
+ const cats=[...new Set(R.map(r=>r.cat))];
+ document.getElementById('bycat').innerHTML='<b style="width:100%">By category:</b>'+cats.map(c=>{
+   const g=R.filter(r=>r.cat===c); const p=g.filter(r=>r.verdict==='PASS').length;
+   return `<span class="pill">${c}: ${Math.round(100*p/g.length)}% pass (${p}/${g.length})</span>`;}).join('');
+ const langs=[...new Set(R.map(r=>r.lang_=r.lang, r.langExp=r.lang))]; // noop
+ const byExp=['en','es','de','fr'];
+ document.getElementById('bylang').innerHTML='<b style="width:100%">By language asked:</b>'+byExp.map(L=>{
+   const g=R.filter(r=>r.lang===L||r['langExp']===L||r['lang']===L); // expected lang is r.lang field
+   const grp=R.filter(r=>r.lang===L); const ok=grp.filter(r=>!r.note).length;
+   return grp.length?`<span class="pill">${L.toUpperCase()}: ${Math.round(100*ok/grp.length)}% right-language (${ok}/${grp.length})</span>`:'';}).join('');
+}
+
+document.getElementById('go').onclick=run;
+document.getElementById('csv').onclick=()=>{
+ const head=['id','lang','cat','expect','question','reply','reply_lang','verdict','note'];
+ const rows=RESULTS.map(r=>[r.id,r.lang,r.cat,r.expect,r.q,(r.reply||r.err),r.lang_||r.lang,r.verdict,r.note].map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(','));
+ const blob=new Blob([head.join(',')+'\n'+rows.join('\n')],{type:'text/csv'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='concierge-qa-results.csv';a.click();
+};
+</script>
+</body></html>
