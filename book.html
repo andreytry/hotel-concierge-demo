@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Confirm your stay · The Casas Collection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--ink:#0a1626;--paper:#f4efe6;--brass:#c2a15c;--brass-lt:#e3cf9e;--muted:#6f7789;--line:rgba(10,22,38,.12)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:#0a1626;font-family:"Inter",system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px}
+  .serif{font-family:"Cormorant Garamond",Georgia,serif}
+  .card{background:var(--paper);width:100%;max-width:520px;border-radius:2px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.45)}
+  .head{background:linear-gradient(160deg,#0a1626,#132a46);color:#fff;padding:34px 34px 30px;position:relative}
+  .head:after{content:"";position:absolute;inset:14px;border:1px solid rgba(255,255,255,.18);pointer-events:none}
+  .eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--brass-lt)}
+  .head h1{font-weight:400;font-size:34px;margin-top:14px;line-height:1.05}
+  .head .ref{margin-top:12px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+  .body{padding:30px 34px 34px}
+  .row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);font-size:15px}
+  .row .l{color:var(--muted)}
+  .row .v{font-weight:500}
+  .row.total{border-bottom:0;padding-top:20px}
+  .row.total .l{font-family:"Cormorant Garamond",serif;font-size:22px;color:var(--ink)}
+  .row.total .v{font-family:"Cormorant Garamond",serif;font-size:26px;color:var(--ink)}
+  .btn{display:block;width:100%;margin-top:26px;background:var(--ink);color:#fff;border:0;padding:17px;font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;cursor:pointer;border-radius:1px;transition:.25s}
+  .btn:hover{background:#132a46}
+  .btn.done{background:var(--brass);color:var(--ink);cursor:default}
+  .fine{margin-top:16px;font-size:12px;color:var(--muted);text-align:center;line-height:1.5}
+  .miss{padding:60px 34px;text-align:center;color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="card" id="card"></div>
+<script>
+  var q=new URLSearchParams(location.search);
+  var ref=q.get('ref'), p=q.get('p'), ci=q.get('in'), co=q.get('out'), g=q.get('g')||'2', rate=q.get('rate'), total=q.get('total'), name=q.get('name')||'';
+  function fmt(d){ if(!d) return ''; var x=new Date(d+'T12:00:00'); return x.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}); }
+  function nights(){ if(!ci||!co) return ''; return Math.round((new Date(co)-new Date(ci))/86400000); }
+  var card=document.getElementById('card');
+  if(!ref||!p){ card.innerHTML='<div class="miss">This booking link is missing details. Please ask the concierge for a new link.</div>'; }
+  else {
+    var n=nights();
+    card.innerHTML=
+     '<div class="head"><div class="eyebrow">The Casas Collection</div><h1 class="serif">'+p+'</h1><div class="ref">Reference '+ref+'</div></div>'+
+     '<div class="body">'+
+       (name?'<div class="row"><span class="l">Guest</span><span class="v">'+name+'</span></div>':'')+
+       '<div class="row"><span class="l">Check-in</span><span class="v">'+fmt(ci)+' · from 4:00 PM</span></div>'+
+       '<div class="row"><span class="l">Check-out</span><span class="v">'+fmt(co)+' · by 11:00 AM</span></div>'+
+       '<div class="row"><span class="l">Guests</span><span class="v">'+g+'</span></div>'+
+       (rate?'<div class="row"><span class="l">$'+rate+' × '+n+' night'+(n>1?'s':'')+' + $99 cleaning</span><span class="v">$'+(rate*n)+' + $99</span></div>':'')+
+       '<div class="row total"><span class="l">Total</span><span class="v">$'+(total||'')+'</span></div>'+
+       '<button class="btn" id="pay" onclick="confirmBk()">Confirm &amp; reserve</button>'+
+       '<div class="fine">Booked direct with The Casas Collection · No platform fees · Free cancellation up to 14 days before arrival</div>'+
+     '</div>';
+  }
+  function confirmBk(){ var b=document.getElementById('pay'); b.className='btn done'; b.textContent='Reserved — check your email'; }
+</script>
+</body>
+</html>
