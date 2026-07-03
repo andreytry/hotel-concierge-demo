@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>The Casas Collection · Direct Booking Concierge — Proposal</title>
+<style>
+  :root{--navy:#0b1f3a;--navy2:#12294b;--ink:#0e1726;--gold:#c9a24b;--gold2:#e3c583;--teal:#1fb6b0;--paper:#f7f8fb;--muted:#6b7688;--line:rgba(255,255,255,.12)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6}
+  a{color:var(--teal)}
+  .wrap{max-width:940px;margin:0 auto;padding:0 22px}
+  nav{position:sticky;top:0;z-index:40;background:rgba(11,31,58,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .brand{color:#fff;font-weight:700;letter-spacing:.14em;font-size:14px}.brand span{color:var(--gold2)}
+  nav a.cta{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#2a1e05;font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;text-decoration:none}
+  .hero{background:radial-gradient(1000px 420px at 82% -10%,rgba(31,182,176,.22),transparent),linear-gradient(160deg,var(--navy),var(--navy2) 62%,#0a1730);color:#fff}
+  .hero .wrap{padding:60px 22px 66px}
+  .tag{display:inline-block;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold2);border:1px solid rgba(201,162,75,.4);padding:6px 12px;border-radius:100px;margin-bottom:20px}
+  h1{font-size:clamp(28px,4.6vw,44px);line-height:1.1;letter-spacing:-.5px;max-width:20ch}
+  h1 em{font-style:normal;color:var(--gold2)}
+  .hero p{margin-top:16px;color:#cfd8e6;font-size:17px;max-width:60ch}
+  section{padding:52px 0;border-bottom:1px solid #eceef3}
+  .kick{color:var(--teal);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:12px}
+  h2{font-size:clamp(22px,3.2vw,30px);letter-spacing:-.3px;margin:8px 0 14px}
+  h3{font-size:17px;margin:0 0 4px}
+  p.lead{color:#39445a;font-size:16.5px}
+  .muted{color:var(--muted)}
+  .leak{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+  @media(max-width:700px){.leak{grid-template-columns:1fr}}
+  .box{background:#fff;border:1px solid #e6eaf1;border-radius:16px;padding:20px}
+  .box.dark{background:linear-gradient(180deg,#0b1f3a,#12294b);color:#fff;border:0}
+  .row{display:flex;justify-content:space-between;padding:6px 0;font-size:14.5px;border-bottom:1px dashed rgba(0,0,0,.08)}
+  .box.dark .row{border-color:rgba(255,255,255,.12)}
+  .row:last-child{border:0}
+  .bleed{color:#e2867f;font-weight:700}.save{color:#39d98a;font-weight:700}.pos{color:#127a5a;font-weight:700}
+  .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+  @media(max-width:760px){.cols3{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid #e6eaf1;border-radius:16px;padding:20px}
+  .card .ic{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--teal));display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:12px}
+  table{width:100%;border-collapse:collapse;margin-top:18px;font-size:14.5px;background:#fff;border:1px solid #e6eaf1;border-radius:12px;overflow:hidden}
+  th,td{padding:11px 13px;text-align:left;border-bottom:1px solid #eef1f5}
+  th{background:#f2f5fa;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#54607a}
+  td.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+  .big-num{font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-1px}
+  .timeline{margin-top:22px;display:flex;flex-direction:column;gap:0}
+  .step{display:grid;grid-template-columns:130px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid #eef1f5}
+  @media(max-width:640px){.step{grid-template-columns:1fr;gap:4px}}
+  .step .when{font-weight:700;color:var(--navy);font-size:13.5px}
+  .step .when small{display:block;color:var(--muted);font-weight:500}
+  .chip{display:inline-block;font-size:11.5px;color:#33507a;background:#eef3fb;border:1px solid #e0e8f5;border-radius:100px;padding:3px 10px;margin:3px 4px 0 0}
+  .price{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+  @media(max-width:700px){.price{grid-template-columns:1fr}}
+  .price .p{background:#fff;border:1px solid #e6eaf1;border-radius:16px;padding:20px}
+  .price .p.hi{border:2px solid var(--gold);box-shadow:0 10px 30px rgba(201,162,75,.16)}
+  .price .amt{font-size:26px;font-weight:800;color:var(--navy)}
+  .btn{display:inline-flex;gap:8px;align-items:center;background:linear-gradient(180deg,var(--gold2),var(--gold));color:#2a1e05;font-weight:700;padding:14px 24px;border-radius:12px;text-decoration:none;font-size:15px}
+  .btn.ghost{background:#0b1f3a;color:#fff}
+  .foot{background:#081527;color:#9fb0c8;font-size:12.5px;text-align:center;padding:22px}
+  .note{background:#fffbea;border:1px solid #f2e4a8;color:#6b5a17;font-size:12.5px;border-radius:10px;padding:10px 13px;margin-top:14px}
+  ul.tick{list-style:none;margin-top:10px}
+  ul.tick li{padding:5px 0 5px 26px;position:relative;font-size:15px}
+  ul.tick li:before{content:"✓";position:absolute;left:0;color:var(--teal);font-weight:800}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <div class="brand">CASAS × <span>DIRECT BOOKING CONCIERGE</span></div>
+  <a class="cta" href="https://andreytry.github.io/hotel-concierge-demo/casas.html" target="_blank">See the live demo →</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <span class="tag">Proposal · The Casas Collection · Downtown Miami</span>
+  <h1>Turn every guest into a <em>direct</em> guest — and stop renting them from Booking.com.</h1>
+  <p>A 24/7 AI concierge across web &amp; WhatsApp that answers guests instantly in English and Spanish, wins the direct booking, and automatically brings them back — so the commission you pay once becomes revenue you keep forever.</p>
+</div></header>
+
+<section><div class="wrap">
+  <span class="kick">The leak</span>
+  <h2>You already paid to acquire this guest. Twice.</h2>
+  <p class="lead">One of your own bookings: <b>Casa Luna, 2 nights, US$257.63 — booked on Booking.com.</b> The platform takes roughly 15% of that stay, and it keeps the guest's contact so the next trip pays commission again too. Multiply that across a 26-apartment portfolio and the OTAs are quietly running off with a full-time salary's worth of your margin every month.</p>
+  <div class="leak">
+    <div class="box">
+      <div class="muted" style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">One real stay · Casa Luna</div>
+      <div class="row"><span>Guest paid on Booking.com</span><b>US$257.63</b></div>
+      <div class="row"><span>OTA commission (~15%)</span><b class="bleed">− ~$39</b></div>
+      <div class="row"><span>Guest relationship</span><b class="bleed">owned by OTA</b></div>
+      <div class="row"><span>Next stay</span><b class="bleed">pays commission again</b></div>
+    </div>
+    <div class="box dark">
+      <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;color:var(--gold2)">Same stay · booked direct</div>
+      <div class="row"><span>Guest pays you</span><b>direct rate</b></div>
+      <div class="row"><span>Commission</span><span class="save">$0</span></div>
+      <div class="row"><span>Guest contact</span><span class="save">yours to keep</span></div>
+      <div class="row"><span>Next stay</span><span class="save">rebooked direct, 0% fee</span></div>
+    </div>
+  </div>
+  <p class="note">💡 Your own guests are already telling you where the friction is — one recent reviewer expected free parking and paid ~$50/night because it "wasn't very clear." A concierge that answers <i>parking, check-in, WiFi and the neighbourhood</i> instantly, 24/7, removes exactly that friction — and captures the booking while the guest is still deciding.</p>
+</div></section>
+
+<section><div class="wrap">
+  <span class="kick">What it is</span>
+  <h2>Three jobs, one concierge</h2>
+  <div class="cols3">
+    <div class="card"><div class="ic">💬</div><h3>Answer, 24/7</h3><p class="muted" style="font-size:14.5px">Instant replies on your website &amp; WhatsApp in English and Spanish — parking, check-in/out, amenities, and live answers about the neighbourhood (Bayside, Kaseya Center, restaurants, groceries) using real-time Google data.</p></div>
+    <div class="card"><div class="ic">🎯</div><h3>Win the direct booking</h3><p class="muted" style="font-size:14.5px">When a guest is deciding, the bot quotes and captures the booking <b>direct</b> — before they bounce back to an OTA — and offers a book-direct perk smaller than the commission you'd have paid.</p></div>
+    <div class="card"><div class="ic">🔁</div><h3>Bring them back</h3><p class="muted" style="font-size:14.5px">The retention engine: automatic follow-ups after check-in, an extend-your-stay offer before checkout, and a "book before high season" nudge — every repeat stay comes back direct, at 0% commission.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <span class="kick">The retention engine</span>
+  <h2>The automated guest lifecycle</h2>
+  <p class="lead">This is where the real money is. OTAs win because they own the guest after checkout. This puts your brand in the guest's pocket for the whole year — every touch pushes the next booking direct.</p>
+  <div class="timeline">
+    <div class="step"><div class="when">Day after check-in<small>Welcome &amp; care</small></div><div><h3>Automated check-in follow-up</h3><p class="muted" style="font-size:14.5px">"Settled in? Here's your WiFi, parking and a few local favourites. Anything you need, just reply." Catches issues early → better reviews, fewer bad surprises.</p></div></div>
+    <div class="step"><div class="when">1–2 days before checkout<small>Extend the stay</small></div><div><h3>Extend-your-stay offer</h3><p class="muted" style="font-size:14.5px">"Loving Miami? Stay a couple more nights — <b>10% off if you book direct with us.</b>" Pure incremental revenue, and it lands off-OTA so there's no commission on the extra nights. <span class="chip">10% direct perk</span></p></div></div>
+    <div class="step"><div class="when">Before departure<small>Small check-in form</small></div><div><h3>Prolongation check</h3><p class="muted" style="font-size:14.5px">A one-tap "Want to keep the apartment a little longer?" — captures late extensions the guest would otherwise book elsewhere or lose.</p></div></div>
+    <div class="step"><div class="when">Pre-high season<small>Nov–Apr, Art Basel, F1, Ultra</small></div><div><h3>Book-direct-before-high-season nudge</h3><p class="muted" style="font-size:14.5px">"Planning your next Miami trip? Lock it in direct now, before high-season rates — 10% returning-guest rate." Turns a past guest into a direct rebooking before the OTA ever re-enters the picture. <span class="chip">Retention · 0% commission</span></p></div></div>
+    <div class="step"><div class="when">Year-round<small>Proactive re-engagement</small></div><div><h3>Seasonal offers &amp; events</h3><p class="muted" style="font-size:14.5px">Periodic, friendly check-ins tied to Miami events and offers: "Coming for Art Basel / the boat show / a winter escape? We'd love to host you again." Keeps the collection top-of-mind and direct.</p></div></div>
+  </div>
+  <p class="note">Built on what you already have — no new booking system needed. The concierge sits <b>alongside</b> your current site &amp; Hostaway engine; it drives guests <i>to</i> your direct channel, it doesn't replace it.</p>
+</div></section>
+
+<section><div class="wrap">
+  <span class="kick">The math · 26 apartments</span>
+  <h2>What this is worth to you</h2>
+  <p class="lead">A transparent model you can adjust with your real numbers. Anchored on one of your real stays (Casa Luna ≈ $130/night guest-paid). Every assumption is shown so nothing is hand-waved.</p>
+  <table>
+    <tr><th>Assumption (edit with your figures)</th><th style="text-align:right">Value</th></tr>
+    <tr><td>Apartments in portfolio</td><td class="n">26</td></tr>
+    <tr><td>Average nightly rate (guest-paid) — from Casa Luna</td><td class="n">$130</td></tr>
+    <tr><td>Average occupancy (assumption)</td><td class="n">70%</td></tr>
+    <tr><td>Share currently booked via OTAs (assumption)</td><td class="n">60%</td></tr>
+    <tr><td>Blended OTA commission (assumption)</td><td class="n">~15%</td></tr>
+  </table>
+  <div class="cols3" style="margin-top:22px">
+    <div class="card"><div class="muted" style="font-size:13px">Monthly booking value across 26 units</div><div class="big-num">~$71k</div><div class="muted" style="font-size:13px">26 × 30 nights × 70% × $130</div></div>
+    <div class="card"><div class="muted" style="font-size:13px">Paid to OTAs / month (the leak)</div><div class="big-num" style="color:#b23b3b">~$6.4k</div><div class="muted" style="font-size:13px">≈ $77k / year in commission</div></div>
+    <div class="card"><div class="muted" style="font-size:13px">Recoverable / month (conservative)</div><div class="big-num" style="color:#127a5a">~$4.9k</div><div class="muted" style="font-size:13px">shift + extend-stay + after-hours capture</div></div>
+  </div>
+  <table>
+    <tr><th>Value lever</th><th>Mechanism</th><th style="text-align:right">Est. / month</th></tr>
+    <tr><td>Commission recovered</td><td>Shift ~15% of OTA bookings to direct</td><td class="n">~$960</td></tr>
+    <tr><td>Extend-stay &amp; direct rebooking</td><td>~8 extra stays/mo · 3 nights · 10% direct perk</td><td class="n">~$2,800</td></tr>
+    <tr><td>After-hours / bilingual capture</td><td>Convert ~3 inquiries/mo that would bounce</td><td class="n">~$1,170</td></tr>
+    <tr><td><b>Total upside</b></td><td class="muted">mostly margin, all off-OTA</td><td class="n" style="color:#127a5a">~$4,930</td></tr>
+  </table>
+  <p class="lead" style="margin-top:20px"><b>Cost of the tool: one account covers all 26 apartments.</b> At a bundle price of <b>$349/month</b>, even if this model is 3× too optimistic you're still at roughly <b>4–5× ROI</b>. On the numbers above it's more than <b>14×</b>.</p>
+  <p class="note">Assumptions labeled on purpose — swap in your real occupancy, ADR and OTA mix and the model recomputes. The <b>26-apartment</b> figure is per your portfolio (your public site currently lists 5); confirm the count and I'll finalise the numbers.</p>
+</div></section>
+
+<section><div class="wrap">
+  <span class="kick">Already built for you</span>
+  <h2>This isn't a mockup — it's live</h2>
+  <ul class="tick">
+    <li>A branded demo page with your five real apartments, photos and ratings</li>
+    <li>A working concierge that already answers about your properties, the airport, parking and the neighbourhood — in English &amp; Spanish</li>
+    <li>Live Google-grounded answers for anything nearby (restaurants, pharmacies, groceries) with names and distances</li>
+    <li>The direct-booking pitch woven into every conversation</li>
+  </ul>
+  <p style="margin-top:20px"><a class="btn" href="https://andreytry.github.io/hotel-concierge-demo/casas.html" target="_blank">Open your live demo →</a></p>
+</div></section>
+
+<section><div class="wrap">
+  <span class="kick">Pricing</span>
+  <h2>Simple, one account for the whole collection</h2>
+  <div class="price">
+    <div class="p"><div class="muted">Concierge</div><div class="amt">$250–300<span style="font-size:14px">/mo</span></div><p class="muted" style="font-size:14px;margin-top:6px">24/7 FAQ bot, web + WhatsApp, EN/ES, live-grounded local answers.</p></div>
+    <div class="p hi"><div class="muted">Bundle · recommended</div><div class="amt">$349<span style="font-size:14px">/mo</span></div><p class="muted" style="font-size:14px;margin-top:6px">Concierge + direct-booking capture + the retention engine (all lifecycle automations).</p></div>
+    <div class="p"><div class="muted">Performance</div><div class="amt">up to $400<span style="font-size:14px">/mo</span></div><p class="muted" style="font-size:14px;margin-top:6px">Bundle + booking-guarantee tie-in for aligned incentives.</p></div>
+  </div>
+</div></section>
+
+<section style="border:0"><div class="wrap" style="text-align:center">
+  <span class="kick">Next step</span>
+  <h2>A 15-minute walkthrough on your real numbers</h2>
+  <p class="lead" style="max-width:56ch;margin:0 auto 22px">Confirm the apartment count and your rough occupancy, and I'll tune the model and switch the demo to your live rates. Then we run a short pilot on the collection.</p>
+  <a class="btn ghost" href="https://andreytry.github.io/hotel-concierge-demo/casas.html" target="_blank">Try the concierge now →</a>
+</div></section>
+
+<div class="foot">Prepared for The Casas Collection · Direct Booking Concierge · Downtown Miami · Figures are an adjustable model, not a guarantee.</div>
+</body>
+</html>
