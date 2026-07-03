@@ -105,7 +105,7 @@
   <div class="navlinks">
     <a href="#stays">Apartments</a>
     <a href="#why">Why book direct</a>
-    <a href="#" onclick="openChat();return false;">Concierge</a>
+    <a href="casas-voice.html">Concierge</a>
   </div>
 </div></nav>
 
@@ -128,7 +128,7 @@
     <h1>Book our apartments <em>direct</em> — and skip the booking-site fees.</h1>
     <p>Five design-led condos with pool, gym, hot tub and skyline views — steps from Bayside Marketplace. Chat with our 24/7 concierge in English or Spanish, get instant answers, and reserve straight with us for the best rate.</p>
     <div class="cta">
-      <button class="btn btn-gold" onclick="openChat()">💬 Chat with the concierge</button>
+      <a class="btn btn-gold" href="casas-voice.html">🎙️ Talk to the concierge</a>
       <a class="btn btn-ghost" href="#stays">Explore the apartments</a>
     </div>
   </div>
@@ -168,7 +168,7 @@
   <div class="kicker">Ready when you are</div>
   <h2 class="big">Ask us anything — then book direct</h2>
   <p class="sub" style="margin:8px auto 22px">Try the concierge: “Is there parking?”, “How far is the airport?”, “What’s good to eat nearby?”, or “I want to book Casa Luna for 3 nights.”</p>
-  <button class="btn btn-gold" onclick="openChat()" style="margin:0 auto">💬 Open the concierge</button>
+  <a class="btn btn-gold" href="casas-voice.html" style="margin:0 auto">🎙️ Talk to the concierge</a>
 </div></section>
 
 <footer><div class="wrap">
@@ -176,26 +176,11 @@
   <div>Direct booking · No platform fees · Concierge in EN / ES</div>
 </div></footer>
 
-<!-- CHAT WIDGET -->
-<button id="cbtn" onclick="toggleChat()">💬 Concierge</button>
-<div id="cpanel">
-  <div class="chead">
-    <span class="dot"></span>
-    <div><b>Casas Collection Concierge</b><span>Online · replies in seconds</span></div>
-  </div>
-  <div class="cbody" id="cbody"></div>
-  <div class="qbtns" id="qbtns"></div>
-  <div class="cfoot">
-    <input id="cin" placeholder="Type your message…" onkeydown="if(event.key==='Enter')send()"/>
-    <button onclick="send()">Send</button>
-  </div>
-</div>
+<!-- VOICE CONCIERGE (ElevenLabs) -->
+<elevenlabs-convai agent-id="agent_6201kwmsmc0rerarvsyqwpr9qwwv"></elevenlabs-convai>
+<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
 
 <script>
-  var CHAT="https://ai-process.app.n8n.cloud/webhook/concierge";
-  var TENANT="+13055550142";                       // The Casas Collection tenant
-  var GUEST="web-"+Math.random().toString(36).slice(2,9);
-
   var IMG="https://bookingenginecdn.hostaway.com/listing/";
   var PROPS=[
     {n:"Casa Soléa",d:"Luxe Miami Escape · Brickell skyline studio",r:"4.95",rv:"9 reviews",c:["Kitchen","A/C","Washer"],img:IMG+"193328-512006-awPPT7RpByKNDG0bu8xB--ftkg4dWW7Vti--fzg2a2cig-69e92a4897573?width=800&quality=70&format=webp",u:"https://thecasascollection.holidayfuture.com/listings/512006"},
@@ -212,26 +197,6 @@
        p.c.map(function(x){return '<span class="chip">'+x+'</span>'}).join('')+
        '</div><div class="go">View apartment →</div></div></a>';
   });document.getElementById('cards').innerHTML=h;})();
-
-  var QUICK=["Is there parking?","How far is the airport?","What's nearby to eat?","Book Casa Luna for 3 nights"];
-  (function(){document.getElementById('qbtns').innerHTML=QUICK.map(function(q){
-    return '<button onclick="quick(this)">'+q+'</button>'}).join('');})();
-
-  var body=document.getElementById('cbody'), greeted=false;
-  function add(t,who){var d=document.createElement('div');d.className='msg '+who;d.textContent=t;body.appendChild(d);body.scrollTop=body.scrollHeight;return d;}
-  function toggleChat(){var p=document.getElementById('cpanel');p.classList.toggle('open');if(p.classList.contains('open')&&!greeted){greeted=true;add("Hi! I'm the Casas Collection concierge. Ask me about our Downtown Miami apartments — amenities, check-in, parking, the neighbourhood — or tell me your dates and I'll help you book direct for a better rate than the travel sites. 🌆","bot");}}
-  function openChat(){var p=document.getElementById('cpanel');if(!p.classList.contains('open'))toggleChat();document.getElementById('cin').focus();}
-  function quick(b){document.getElementById('cin').value=b.textContent;send();}
-  async function send(){
-    var i=document.getElementById('cin'),t=i.value.trim();if(!t)return;i.value="";
-    add(t,"me");var tp=add("…","bot");
-    try{
-      var r=await fetch(CHAT,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},
-        body:new URLSearchParams({From:GUEST,To:TENANT,Body:t})});
-      var o=await r.json();tp.textContent=(o&&o.reply)?o.reply:"Sorry, I didn't catch that — could you rephrase?";
-    }catch(e){tp.textContent="Connection issue — please try again in a moment.";}
-    body.scrollTop=body.scrollHeight;
-  }
 </script>
 </body>
 </html>
