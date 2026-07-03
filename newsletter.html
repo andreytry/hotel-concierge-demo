@@ -23,9 +23,9 @@
 
     <!-- INTRO -->
     <tr><td style="padding:38px 40px 8px 40px;">
-      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c2a15c;">Your monthly note from Miami</div>
+      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c2a15c;">Your weekly note from Miami</div>
       <h1 style="margin:14px 0 0 0;font-family:Georgia,'Times New Roman',serif;font-weight:normal;font-size:34px;line-height:1.1;color:#0a1626;">Dear {{first_name}}, the bay is waiting.</h1>
-      <p style="margin:16px 0 0 0;font-size:15px;line-height:1.65;color:#41506a;">A short hello from Downtown Miami — a few things worth doing this month, and a private rate we've set aside for you.</p>
+      <p style="margin:16px 0 0 0;font-size:15px;line-height:1.65;color:#41506a;">A short hello from Downtown Miami — a few things worth doing this week, and a private rate we've set aside for you.</p>
     </td></tr>
 
     <!-- PERSONAL OFFER -->
@@ -44,22 +44,11 @@
       </table>
     </td></tr>
 
-    <!-- THIS MONTH -->
+    <!-- THIS WEEK -->
     <tr><td style="padding:30px 40px 6px 40px;">
-      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c2a15c;">This month, on your doorstep</div>
+      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c2a15c;">This week in Miami</div>
       <table role="presentation" width="100%" style="margin-top:10px;">
-        <tr><td style="padding:14px 0;border-bottom:1px solid rgba(10,22,38,.12);">
-          <div style="font-family:Georgia,serif;font-size:19px;color:#0a1626;">Sunset at Bayfront Park</div>
-          <div style="font-size:13.5px;color:#6f7789;margin-top:3px;">A three-minute walk from your door, best just before eight.</div>
-        </td></tr>
-        <tr><td style="padding:14px 0;border-bottom:1px solid rgba(10,22,38,.12);">
-          <div style="font-family:Georgia,serif;font-size:19px;color:#0a1626;">Cuban dinner at Bayside</div>
-          <div style="font-size:13.5px;color:#6f7789;margin-top:3px;">La Cañita for live music and a mojito on the marina.</div>
-        </td></tr>
-        <tr><td style="padding:14px 0;">
-          <div style="font-family:Georgia,serif;font-size:19px;color:#0a1626;">A day across the causeway</div>
-          <div style="font-size:13.5px;color:#6f7789;margin-top:3px;">South Beach is fifteen minutes away — go early, stay for lunch.</div>
-        </td></tr>
+        {{events_html}}
       </table>
     </td></tr>
 
