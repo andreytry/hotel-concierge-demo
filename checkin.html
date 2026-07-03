@@ -96,6 +96,7 @@
     try{
       var r=await fetch(SB,{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify(d)});
       if(!r.ok) throw new Error(await r.text());
+      try{ fetch("https://ai-process.app.n8n.cloud/webhook/casas-register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:d.full_name,email:d.email})}); }catch(e){}
       f.style.display="none"; document.getElementById('done').style.display="block";
       window.scrollTo({top:0,behavior:'smooth'});
     }catch(err){ sb.disabled=false; sb.textContent="Complete check-in"; alert("Something went wrong — please try again."); }
