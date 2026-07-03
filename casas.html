@@ -23,6 +23,7 @@
   /* HERO */
   .hero{position:relative;background:radial-gradient(1200px 500px at 80% -10%,rgba(31,182,176,.25),transparent),linear-gradient(160deg,var(--navy),var(--navy2) 60%,#0a1730);color:#fff;overflow:hidden}
   .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent,rgba(0,0,0,.25));pointer-events:none}
+  .heroimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.26;z-index:0}
   .hero .wrap{position:relative;z-index:2;padding:78px 22px 92px}
   .eyebrow{display:inline-block;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold2);border:1px solid rgba(201,162,75,.4);padding:6px 12px;border-radius:100px;margin-bottom:22px}
   .hero h1{font-size:clamp(32px,5vw,52px);line-height:1.08;font-weight:800;max-width:16ch;letter-spacing:-.5px}
@@ -55,7 +56,10 @@
   @media(max-width:600px){.grid{grid-template-columns:1fr}}
   .card{border:1px solid #e7eaf0;border-radius:18px;overflow:hidden;background:#fff;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
   .card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(11,31,58,.12)}
-  .card .top{height:118px;background:linear-gradient(135deg,var(--navy),#173a6b 70%,var(--teal));position:relative;display:flex;align-items:flex-end;padding:14px}
+  .card .top{height:172px;background:linear-gradient(135deg,var(--navy),#173a6b 70%,var(--teal));position:relative;display:flex;align-items:flex-end;padding:14px;overflow:hidden}
+  .card .top img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .card .top:before{content:"";position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(4,12,26,.72));z-index:1}
+  .card .top .casa,.card .top .rate{position:relative;z-index:2}
   .card .top .rate{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.35);color:#fff;font-size:12px;font-weight:700;padding:4px 9px;border-radius:100px;border:1px solid rgba(255,255,255,.25)}
   .card .top .casa{color:#fff;font-weight:800;font-size:19px;letter-spacing:.02em;text-shadow:0 1px 8px rgba(0,0,0,.35)}
   .card .body{padding:15px 16px 17px;display:flex;flex-direction:column;gap:11px;flex:1}
@@ -106,6 +110,7 @@
 </div></nav>
 
 <header class="hero">
+  <img class="heroimg" src="https://bookingenginecdn.hostaway.com/listing/193328-512008-724abZvBeJGxbsteSeBKvWcQYqTjc6tm7puzOKNl5rU-69e92a1745d5c?width=1600&quality=70&format=webp" alt="" onerror="this.style.display='none'"/>
   <svg class="skyline" viewBox="0 0 600 260" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <g fill="rgba(255,255,255,.10)">
       <rect x="20" y="120" width="46" height="140"/><rect x="80" y="80" width="40" height="180"/>
@@ -191,16 +196,18 @@
   var TENANT="+13055550142";                       // The Casas Collection tenant
   var GUEST="web-"+Math.random().toString(36).slice(2,9);
 
+  var IMG="https://bookingenginecdn.hostaway.com/listing/";
   var PROPS=[
-    {n:"Casa Soléa",d:"Luxe Miami Escape",r:"4.95",c:["Kitchen","A/C","Washer"],u:"https://thecasascollection.holidayfuture.com/listings/512006"},
-    {n:"Casa Athena",d:"High-Rise · Pool & Gym · Skyline",r:"4.90",c:["Kitchen","A/C","Washer"],u:"https://thecasascollection.holidayfuture.com/listings/512007"},
-    {n:"Casa Marina",d:"Skyline Views · Downtown Tower",r:"4.80",c:["Pool","Kitchen","A/C"],u:"https://thecasascollection.holidayfuture.com/listings/512008"},
-    {n:"Casa Luna",d:"High-Rise · Pool & Gym · Skyline",r:"4.85",c:["Free WiFi","Hot tub","A/C"],u:"https://thecasascollection.holidayfuture.com/listings/512014"},
-    {n:"Casa Aurora",d:"High-Rise · Pool & Gym · Skyline",r:"—",c:["Free WiFi","Kitchen","A/C"],u:"https://thecasascollection.holidayfuture.com/listings/561505"}
+    {n:"Casa Soléa",d:"Luxe Miami Escape · Brickell skyline studio",r:"4.95",rv:"9 reviews",c:["Kitchen","A/C","Washer"],img:IMG+"193328-512006-awPPT7RpByKNDG0bu8xB--ftkg4dWW7Vti--fzg2a2cig-69e92a4897573?width=800&quality=70&format=webp",u:"https://thecasascollection.holidayfuture.com/listings/512006"},
+    {n:"Casa Athena",d:"Elevated Miami escape · Pool & Gym",r:"4.90",rv:"9 reviews",c:["Kitchen","A/C","Dryer"],img:IMG+"193328-512007-h63V3G--VT2ZZ--ztjLt47bYhpfsl2H4vFkncLh5FYDPs-69e9316e66b28?width=800&quality=70&format=webp",u:"https://thecasascollection.holidayfuture.com/listings/512007"},
+    {n:"Casa Marina",d:"23rd floor · Bay & skyline views",r:"4.80",rv:"6 reviews",c:["Heated pool","Kitchen","A/C"],img:IMG+"193328-512008-724abZvBeJGxbsteSeBKvWcQYqTjc6tm7puzOKNl5rU-69e92a1745d5c?width=800&quality=70&format=webp",u:"https://thecasascollection.holidayfuture.com/listings/512008"},
+    {n:"Casa Luna",d:"High-Rise · Pool & Gym · Skyline",r:"4.85",rv:"4 reviews",c:["Free WiFi","Hot tub","A/C"],img:IMG+"193328-512014-8jpneyhhqCcogbO1VHELQdx6wRYr66ftcExzq2FhjbE-6a2333a916252?width=800&quality=70&format=webp",u:"https://thecasascollection.holidayfuture.com/listings/512014"},
+    {n:"Casa Aurora",d:"High-Rise · Pool & Gym · Skyline",r:"—",rv:"New",c:["Free WiFi","Hot tub","A/C"],img:IMG+"193328-561505-JAN7vkQZ-k6ciQirDChikB2SjQt5BQ0e3bpQ19TMsWM-6a34882f7b01d?width=800&quality=70&format=webp",u:"https://thecasascollection.holidayfuture.com/listings/561505"}
   ];
   (function(){var h="";PROPS.forEach(function(p){
     h+='<a class="card" href="'+p.u+'" target="_blank" rel="noopener"><div class="top">'+
-       (p.r!=="—"?'<div class="rate">★ '+p.r+'</div>':'')+
+       '<img src="'+p.img+'" alt="'+p.n+'" loading="lazy" onerror="this.style.display=\'none\'"/>'+
+       (p.r!=="—"?'<div class="rate">★ '+p.r+' · '+p.rv+'</div>':'<div class="rate">'+p.rv+'</div>')+
        '<div class="casa">'+p.n+'</div></div><div class="body"><div class="meta">3 guests · 1 bed · 1 bath</div><div style="font-size:13.5px;color:#41506a">'+p.d+'</div><div class="chips">'+
        p.c.map(function(x){return '<span class="chip">'+x+'</span>'}).join('')+
        '</div><div class="go">View apartment →</div></div></a>';
