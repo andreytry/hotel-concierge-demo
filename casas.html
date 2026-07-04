@@ -146,25 +146,23 @@
   footer .fnav a:hover{color:#fff}
   footer .fmeta{font-size:11.5px;color:rgba(255,255,255,.45)}
 
-  .langswitch{position:fixed;left:20px;bottom:20px;z-index:60;display:flex;gap:2px;background:rgba(10,22,38,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);border-radius:2px;padding:4px}
-  .langswitch button{background:none;border:0;color:rgba(255,255,255,.62);padding:6px 11px;cursor:pointer;font-family:inherit;font-size:11px;letter-spacing:.16em;border-radius:1px;transition:.2s}
+  .langswitch{display:flex;gap:2px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.32);border-radius:2px;padding:3px}
+  .langswitch button{background:none;border:0;color:rgba(255,255,255,.65);padding:6px 10px;cursor:pointer;font-family:inherit;font-size:11px;letter-spacing:.16em;border-radius:1px;transition:.2s}
   .langswitch button.on{background:var(--brass-lt);color:var(--ink);font-weight:600}
-  @media(max-width:640px){.langswitch{left:14px;bottom:14px}}
+  @media(max-width:640px){.langswitch button{padding:5px 9px}}
 </style>
 </head>
 <body>
-<div class="langswitch" aria-label="Language">
-  <button type="button" data-lang="en">EN</button>
-  <button type="button" data-lang="es">ES</button>
-</div>
 
 <nav id="nav"><div class="wrap">
   <div class="word">THE CASAS <b>COLLECTION</b></div>
   <div class="navr">
     <a data-i18n="nav_apts" href="#collection">The Apartments</a>
     <a data-i18n="nav_res" href="#residence">The Residence</a>
-    <a data-i18n="nav_checkin" class="checkin" href="checkin.html">Check in</a>
-    <a data-i18n="nav_book" class="book" href="https://thecasascollection.holidayfuture.com/all-listings" target="_blank" rel="noopener">Book Direct</a>
+    <div class="langswitch" aria-label="Language">
+      <button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="es">ES</button>
+    </div>
   </div>
 </div></nav>
 
