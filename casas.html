@@ -50,6 +50,9 @@
   .btn{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;padding:15px 26px;border-radius:1px;transition:.25s}
   .btn-solid{background:var(--brass-lt);color:var(--ink)}
   .btn-solid:hover{background:#fff}
+  .hero .acts .stack{display:flex;flex-direction:column;gap:10px}
+  .btn-checkin{background:transparent;border:1px solid rgba(255,255,255,.55);color:#fff;text-align:center}
+  .btn-checkin:hover{border-color:var(--brass-lt);color:var(--brass-lt)}
   .btn-line{color:#fff;border-bottom:1px solid rgba(255,255,255,.4);padding:6px 2px}
   .btn-line:hover{border-color:var(--brass-lt);color:var(--brass-lt)}
   .scrollcue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:3;color:rgba(255,255,255,.6);font-size:10px;letter-spacing:.3em;text-transform:uppercase;writing-mode:vertical-rl}
@@ -157,7 +160,10 @@
     <h1 class="serif">Stay above<br/>the <em>skyline.</em></h1>
     <p>Five private apartments in a Downtown high-rise — rooftop pool, bay views, skyline living. Booked directly with us, never through a middleman.</p>
     <div class="acts">
-      <a class="btn btn-solid" href="https://thecasascollection.holidayfuture.com/all-listings" target="_blank" rel="noopener">Book Direct</a>
+      <div class="stack">
+        <a class="btn btn-solid" href="https://thecasascollection.holidayfuture.com/all-listings" target="_blank" rel="noopener">Book Direct</a>
+        <a class="btn btn-checkin" href="checkin.html">Check in</a>
+      </div>
       <a class="btn btn-line" href="#collection">View the apartments</a>
     </div>
   </div>
