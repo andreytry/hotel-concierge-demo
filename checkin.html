@@ -28,6 +28,7 @@
   textarea{resize:vertical;min-height:80px}
   .agree{display:flex;gap:11px;align-items:flex-start;margin:4px 0 22px;font-size:13.5px;line-height:1.5;color:#41506a}
   .agree input{width:20px;height:20px;flex:0 0 auto;margin-top:1px}
+  .agree-err{display:none;color:#c0392b;font-size:13px;margin:-14px 0 18px;font-weight:500}
   .btn{width:100%;background:var(--ink);color:#fff;border:0;padding:17px;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;cursor:pointer;border-radius:2px;transition:background .25s}
   .btn:active{background:var(--ink2)}
   .btn:disabled{opacity:.55}
@@ -65,7 +66,8 @@
         <select name="guests"><option>1</option><option selected>2</option><option>3</option></select>
       </div>
       <div class="fld"><label>Anything we should know? (optional)</label><textarea name="requests" placeholder="Early arrival, parking, a celebration…"></textarea></div>
-      <label class="agree"><input type="checkbox" name="agree_rules" required/><span>I agree to the house rules — no smoking indoors, no parties, quiet hours 10 PM–8 AM, up to 3 guests.</span></label>
+      <label class="agree"><input type="checkbox" name="agree_rules" id="agree"/><span>I agree to the house rules — no smoking indoors, no parties, quiet hours 10 PM–8 AM, up to 3 guests.</span></label>
+      <div class="agree-err" id="agree_err">Please tick the box above to agree to the house rules before checking in.</div>
       <button class="btn" id="sb" type="submit">Complete check-in</button>
       <div class="book-note">Not booked yet? <a href="https://thecasascollection.holidayfuture.com/all-listings" target="_blank" rel="noopener">Reserve direct →</a></div>
     </form>
@@ -83,8 +85,12 @@
   var KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreWxyb2xwdXd5YnNrc3NwYmxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgwOTIsImV4cCI6MjA5NDQ5NDA5Mn0.xXfcM2u1FrZZujo-1KNnLGkPSkaoRGkjgk7KreB1TPM";
   var REG="https://ai-process.app.n8n.cloud/webhook/casas-register";
   var f=document.getElementById('f');
+  var agree=document.getElementById('agree'), agreeErr=document.getElementById('agree_err');
+  agree.addEventListener('change',function(){ if(agree.checked) agreeErr.style.display='none'; });
   f.addEventListener('submit',async function(e){
     e.preventDefault();
+    if(!agree.checked){ agreeErr.style.display='block'; agree.focus(); agree.scrollIntoView({block:'center',behavior:'smooth'}); return; }
+    agreeErr.style.display='none';
     var sb=document.getElementById('sb'); sb.disabled=true; sb.textContent="Checking you in…";
     var d=Object.fromEntries(new FormData(f).entries());
     d.agree_rules=!!d.agree_rules; d.guests=parseInt(d.guests)||2;
