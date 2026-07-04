@@ -2,101 +2,96 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>Guest Check-in · The Casas Collection</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-  :root{--ink:#0a1626;--ink2:#132a46;--paper:#f4efe6;--brass:#c2a15c;--brass-lt:#e3cf9e;--muted:#6f7789;--line:rgba(10,22,38,.14)}
+  :root{--ink:#0a1626;--ink2:#132a46;--paper:#f4efe6;--brass:#c2a15c;--brass-lt:#e3cf9e;--muted:#6f7789;--border:#ddd3c2}
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--ink);color:var(--ink);font-family:"Inter",system-ui,sans-serif;min-height:100vh;padding:34px 20px}
+  html,body{background:var(--ink)}
+  body{font-family:"Inter",system-ui,-apple-system,sans-serif;color:var(--ink);min-height:100vh;padding:clamp(12px,4vw,32px);display:flex;justify-content:center;align-items:flex-start}
   .serif{font-family:"Cormorant Garamond",Georgia,serif}
-  .card{background:var(--paper);max-width:600px;margin:0 auto;border-radius:2px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.4)}
-  .head{background:linear-gradient(160deg,var(--ink),var(--ink2));color:#fff;padding:40px 40px 34px;position:relative}
-  .head:after{content:"";position:absolute;inset:16px;border:1px solid rgba(255,255,255,.18);pointer-events:none}
-  .eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--brass-lt)}
-  .head h1{font-weight:400;font-size:40px;margin-top:14px;line-height:1.02}
-  .head p{margin-top:12px;font-size:14px;color:rgba(255,255,255,.72);max-width:44ch}
-  form{padding:34px 40px 40px}
-  .fld{margin-bottom:20px}
-  .fld.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:0}
-  label{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:500}
-  input,select,textarea{width:100%;background:#fff;border:1px solid #ddd3c2;border-radius:1px;padding:13px 14px;font-size:15px;font-family:inherit;color:var(--ink);outline:none;transition:border-color .2s}
+  .card{background:var(--paper);width:100%;max-width:480px;border-radius:3px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.4)}
+
+  .head{background:linear-gradient(160deg,var(--ink),var(--ink2));color:#fff;padding:clamp(24px,6vw,36px) clamp(20px,6vw,34px) clamp(22px,5vw,30px)}
+  .eyebrow{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--brass-lt)}
+  .head h1{font-weight:500;font-size:clamp(28px,8vw,38px);margin-top:12px;line-height:1.04}
+  .head p{margin-top:12px;font-size:14px;line-height:1.55;color:rgba(255,255,255,.72)}
+
+  form{padding:clamp(22px,6vw,34px) clamp(20px,6vw,34px) clamp(26px,6vw,36px)}
+  .fld{margin-bottom:18px}
+  label{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;font-weight:600}
+  input,select,textarea{width:100%;background:#fff;border:1px solid var(--border);border-radius:2px;padding:14px;font-size:16px;font-family:inherit;color:var(--ink);outline:none;-webkit-appearance:none;appearance:none;transition:border-color .2s}
+  select{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%236f7789' fill='none' stroke-width='1.5'/></svg>");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
   input:focus,select:focus,textarea:focus{border-color:var(--brass)}
-  textarea{resize:vertical;min-height:74px}
-  .agree{display:flex;align-items:flex-start;gap:11px;margin:6px 0 24px;font-size:13.5px;color:#41506a}
-  .agree input{width:auto;margin-top:3px}
-  .agree a{color:var(--brass);text-decoration:underline}
-  .btn{width:100%;background:var(--ink);color:#fff;border:0;padding:17px;font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;cursor:pointer;border-radius:1px;transition:.25s}
-  .btn:hover{background:var(--ink2)}
-  .btn:disabled{opacity:.55;cursor:default}
-  .done{padding:56px 40px;text-align:center;display:none}
-  .done .mk{font-family:"Cormorant Garamond",serif;font-size:56px;color:var(--brass);line-height:1}
-  .done h2{font-weight:400;font-size:30px;margin:14px 0 10px}
-  .done p{color:var(--muted);font-size:15px;max-width:40ch;margin:0 auto}
-  .foot{text-align:center;padding:0 40px 30px;font-size:11px;letter-spacing:.1em;color:var(--muted)}
-  .foot a{color:var(--brass)}
-  .book-note{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
+  textarea{resize:vertical;min-height:80px}
+  .agree{display:flex;gap:11px;align-items:flex-start;margin:4px 0 22px;font-size:13.5px;line-height:1.5;color:#41506a}
+  .agree input{width:20px;height:20px;flex:0 0 auto;margin-top:1px}
+  .btn{width:100%;background:var(--ink);color:#fff;border:0;padding:17px;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;cursor:pointer;border-radius:2px;transition:background .25s}
+  .btn:active{background:var(--ink2)}
+  .btn:disabled{opacity:.55}
+  .book-note{margin-top:20px;padding-top:16px;border-top:1px solid rgba(10,22,38,.14);font-size:13.5px;color:var(--muted);text-align:center}
   .book-note a{color:var(--ink);font-weight:600}
+
+  .done{display:none;padding:clamp(44px,12vw,60px) 28px;text-align:center}
+  .done .mk{font-family:"Cormorant Garamond",serif;font-size:54px;color:var(--brass);line-height:1}
+  .done h2{font-weight:500;font-size:28px;margin:12px 0 10px}
+  .done p{color:var(--muted);font-size:15px;line-height:1.6;max-width:34ch;margin:0 auto}
+
+  .foot{text-align:center;padding:0 20px 26px;font-size:11px;letter-spacing:.08em;color:var(--muted)}
+  .foot a{color:var(--brass)}
 </style>
 </head>
 <body>
   <div class="card">
     <div class="head">
-      <div class="eyebrow">The Casas Collection · Downtown Miami</div>
+      <div class="eyebrow">The Casas Collection</div>
       <h1 class="serif">Guest check-in</h1>
-      <p>Complete this before arrival and your private door code and building instructions will be texted to you the morning of your stay. No front-desk queue.</p>
+      <p>Complete this before arrival — we'll text your door code and building instructions the morning of your stay.</p>
     </div>
 
     <form id="f">
-      <div class="fld"><label>Booking reference (if you have one)</label><input name="ref" placeholder="e.g. CC-8TXAZ"/></div>
-      <div class="fld two">
-        <div><label>Full name</label><input name="full_name" required/></div>
-        <div><label>Email</label><input name="email" type="email" required/></div>
+      <div class="fld"><label>Full name</label><input name="full_name" autocomplete="name" required/></div>
+      <div class="fld"><label>Email</label><input name="email" type="email" autocomplete="email" inputmode="email" required/></div>
+      <div class="fld"><label>Phone</label><input name="phone" type="tel" autocomplete="tel" inputmode="tel" required/></div>
+      <div class="fld"><label>Arrival date</label><input name="arrival_date" type="date" required/></div>
+      <div class="fld"><label>Arrival time</label>
+        <select name="arrival_time">
+          <option>Afternoon (4–6 PM)</option><option>Evening (6–9 PM)</option><option>Late (after 9 PM)</option><option>Next morning</option>
+        </select>
       </div>
-      <div style="height:20px"></div>
-      <div class="fld two">
-        <div><label>Phone</label><input name="phone" required/></div>
-        <div><label>Guests</label><select name="guests"><option>1</option><option selected>2</option><option>3</option></select></div>
+      <div class="fld"><label>Guests</label>
+        <select name="guests"><option>1</option><option selected>2</option><option>3</option></select>
       </div>
-      <div style="height:20px"></div>
-      <div class="fld two">
-        <div><label>Arrival date</label><input name="arrival_date" type="date" required/></div>
-        <div><label>Estimated arrival time</label>
-          <select name="arrival_time">
-            <option>Afternoon (4–6 PM)</option><option>Evening (6–9 PM)</option><option>Late (after 9 PM)</option><option>Next morning</option>
-          </select>
-        </div>
-      </div>
-      <div style="height:20px"></div>
-      <div class="fld"><label>ID / passport number (optional)</label><input name="id_number"/></div>
-      <div class="fld"><label>Anything we should know?</label><textarea name="requests" placeholder="Early arrival, parking, accessibility, a celebration…"></textarea></div>
-      <label class="agree"><input type="checkbox" name="agree_rules" required/> <span>I agree to the house rules — no smoking indoors, no parties, quiet hours 10 PM–8 AM, up to 3 registered guests.</span></label>
+      <div class="fld"><label>Anything we should know? (optional)</label><textarea name="requests" placeholder="Early arrival, parking, a celebration…"></textarea></div>
+      <label class="agree"><input type="checkbox" name="agree_rules" required/><span>I agree to the house rules — no smoking indoors, no parties, quiet hours 10 PM–8 AM, up to 3 guests.</span></label>
       <button class="btn" id="sb" type="submit">Complete check-in</button>
-      <div class="book-note">Haven't booked yet? <a href="https://thecasascollection.holidayfuture.com/all-listings" target="_blank">Reserve your apartment direct →</a></div>
+      <div class="book-note">Not booked yet? <a href="https://thecasascollection.holidayfuture.com/all-listings" target="_blank" rel="noopener">Reserve direct →</a></div>
     </form>
 
     <div class="done" id="done">
       <div class="mk">✦</div>
       <h2 class="serif">You're checked in.</h2>
-      <p>Thank you. Your door code and building instructions will arrive by text the morning of arrival. We can't wait to host you.</p>
+      <p>Thank you. Your door code and building instructions will arrive by text the morning of arrival.</p>
     </div>
-    <div class="foot">The Casas Collection · Alea Miami, 230 NE 4th Street · <a href="casas.html">Back to site</a></div>
+    <div class="foot">Alea Miami · 230 NE 4th Street · <a href="casas.html">Back to site</a></div>
   </div>
 
 <script>
   var SB="https://zkylrolpuwybsksspblj.supabase.co/rest/v1/casas_checkins";
   var KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpreWxyb2xwdXd5YnNrc3NwYmxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MTgwOTIsImV4cCI6MjA5NDQ5NDA5Mn0.xXfcM2u1FrZZujo-1KNnLGkPSkaoRGkjgk7KreB1TPM";
+  var REG="https://ai-process.app.n8n.cloud/webhook/casas-register";
   var f=document.getElementById('f');
   f.addEventListener('submit',async function(e){
     e.preventDefault();
     var sb=document.getElementById('sb'); sb.disabled=true; sb.textContent="Checking you in…";
     var d=Object.fromEntries(new FormData(f).entries());
-    d.agree_rules = !!d.agree_rules; d.guests = parseInt(d.guests)||2;
+    d.agree_rules=!!d.agree_rules; d.guests=parseInt(d.guests)||2;
     try{
       var r=await fetch(SB,{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify(d)});
       if(!r.ok) throw new Error(await r.text());
-      try{ fetch("https://ai-process.app.n8n.cloud/webhook/casas-register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:d.full_name,email:d.email})}); }catch(e){}
+      try{ fetch(REG,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:d.full_name,email:d.email})}); }catch(e){}
       f.style.display="none"; document.getElementById('done').style.display="block";
       window.scrollTo({top:0,behavior:'smooth'});
     }catch(err){ sb.disabled=false; sb.textContent="Complete check-in"; alert("Something went wrong — please try again."); }
