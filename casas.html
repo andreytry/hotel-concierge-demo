@@ -37,13 +37,13 @@
   /* HERO */
   .hero{position:relative;min-height:100vh;display:flex;align-items:flex-end;color:#fff;overflow:hidden}
   .hero img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
-  .hero .veil{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(8,18,32,.68) 0%,rgba(8,18,32,.28) 40%,rgba(6,13,24,.92) 100%)}
+  .hero .veil{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(8,18,32,.82) 0%,rgba(8,18,32,.5) 42%,rgba(6,13,24,.96) 100%)}
   .hero .frame{position:absolute;inset:22px;z-index:2;border:1px solid rgba(255,255,255,.28);pointer-events:none}
   .hero .wrap{position:relative;z-index:3;padding-top:120px;padding-bottom:66px;width:100%}
   .hero .eyebrow{color:var(--brass-lt);margin-bottom:26px;text-shadow:0 1px 12px rgba(0,0,0,.6)}
-  .hero h1{font-weight:500;font-size:clamp(48px,9vw,108px);line-height:.96;letter-spacing:-.015em;text-shadow:0 2px 46px rgba(0,0,0,.6),0 1px 4px rgba(0,0,0,.45)}
+  .hero h1{font-weight:600;font-size:clamp(60px,10.5vw,124px);line-height:.94;letter-spacing:-.015em;text-shadow:0 3px 40px rgba(0,0,0,.9),0 2px 8px rgba(0,0,0,.65)}
   .hero h1 em{font-style:italic;color:var(--brass-lt)}
-  .hero p{margin-top:26px;max-width:46ch;font-size:18px;font-weight:400;color:#ffffff;text-shadow:0 1px 22px rgba(0,0,0,.7)}
+  .hero p{margin-top:24px;max-width:44ch;font-size:21px;font-weight:500;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.92),0 1px 3px rgba(0,0,0,.7)}
   .hero .acts{margin-top:34px;display:flex;gap:26px;align-items:center;flex-wrap:wrap}
   .btn{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;padding:15px 26px;border-radius:1px;transition:.25s}
   .btn-solid{background:var(--brass-lt);color:var(--ink)}
@@ -118,7 +118,7 @@
   .loc .row .p{font-family:"Cormorant Garamond",serif;font-size:26px;font-weight:400}
   .loc .row .m{font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
 
-  /* CONCIERGE */
+  /* CONTACT */
   .cta-sec{background:var(--ink);color:#fff;padding:120px 0;text-align:center}
   .cta-sec .eyebrow{color:var(--brass-lt)}
   .cta-sec h2{font-weight:300;font-size:clamp(30px,4.6vw,56px);margin:20px 0 18px}
@@ -128,6 +128,10 @@
   footer{background:#07111e;color:rgba(255,255,255,.5);font-size:12px;letter-spacing:.04em}
   footer .wrap{padding:34px 32px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
   footer .word{font-size:12px}
+  footer .fnav{display:flex;gap:22px;flex-wrap:wrap}
+  footer .fnav a{color:rgba(255,255,255,.55);letter-spacing:.14em;text-transform:uppercase;font-size:11px}
+  footer .fnav a:hover{color:#fff}
+  footer .fmeta{font-size:11.5px;color:rgba(255,255,255,.45)}
 </style>
 </head>
 <body>
@@ -137,7 +141,6 @@
   <div class="navr">
     <a href="#collection">The Apartments</a>
     <a href="#residence">The Residence</a>
-    <a href="#concierge">Concierge</a>
     <a href="checkin.html">Check in</a>
     <a class="book" href="https://thecasascollection.holidayfuture.com/all-listings" target="_blank" rel="noopener">Book Direct</a>
   </div>
@@ -150,7 +153,7 @@
   <div class="wrap">
     <div class="eyebrow">Downtown Miami · 230 NE 4th Street</div>
     <h1 class="serif">Stay above<br/>the <em>skyline.</em></h1>
-    <p>Five private apartments in a Downtown high-rise — rooftop pool, bay views, and a concierge that answers day or night. Reserved with us, never through a middleman.</p>
+    <p>Five private apartments in a Downtown high-rise — rooftop pool, bay views, skyline living. Booked directly with us, never through a middleman.</p>
     <div class="acts">
       <a class="btn btn-solid" href="https://thecasascollection.holidayfuture.com/all-listings" target="_blank" rel="noopener">Book Direct</a>
       <a class="btn btn-line" href="#collection">View the apartments</a>
@@ -205,11 +208,11 @@
     <div class="eyebrow">Book Direct</div>
     <h2 class="serif">The same apartment, without the <em>middleman's cut.</em></h2>
     <div class="ledger">
-      <div class="c"><div class="fig serif">$257.63</div><div class="cap">A recent Casa Luna stay, booked on Booking.com.</div></div>
-      <div class="c lost"><div class="fig serif">≈ $50</div><div class="cap">Taken by the platform in commission.</div></div>
-      <div class="c keep"><div class="fig serif">$0</div><div class="cap">Commission when you reserve directly with us — a better rate for you, kept between us.</div></div>
+      <div class="c keep"><div class="fig serif">Best rate</div><div class="cap">Reserve with us for our lowest available price — guaranteed.</div></div>
+      <div class="c"><div class="fig serif">No fees</div><div class="cap">Nothing added at checkout. No platform commission, ever.</div></div>
+      <div class="c keep"><div class="fig serif">Every return</div><div class="cap">A returning-guest rate on every stay that follows.</div></div>
     </div>
-    <p class="note">Book through us and the relationship stays personal: a better price, a concierge on hand around the clock, and a returning-guest rate for every stay that follows.</p>
+    <p class="note">Reserve directly with us for our best, unbeatable rate — a better price for you, kept between us.</p>
   </div>
 </section>
 
@@ -248,18 +251,24 @@
   </div>
 </section>
 
-<section class="cta-sec" id="concierge">
+<section class="cta-sec" id="contact">
   <div class="wrap">
-    <div class="eyebrow">The Concierge</div>
-    <h2 class="serif">A concierge that never sleeps.</h2>
-    <p>Ask about the apartments, the building, parking, or the neighbourhood — in English or Spanish, any hour. Speak with it using the button in the corner of your screen.</p>
-    <div class="hint">Tap to talk &nbsp;·&nbsp; Bottom-right</div>
+    <div class="eyebrow">Here for you</div>
+    <h2 class="serif">We answer, 24/7.</h2>
+    <p>Ask us anything — the apartments, the building, parking or the neighbourhood — in English or Spanish, any hour. Book directly with us for our best, unbeatable rates.</p>
+    <div class="hint">Ask us &nbsp;·&nbsp; bottom-right of your screen</div>
   </div>
 </section>
 
 <footer><div class="wrap">
   <div class="word">THE CASAS <b>COLLECTION</b></div>
-  <div>Downtown Miami · Reserved direct, no platform fees</div>
+  <nav class="fnav">
+    <a href="#collection">Apartments</a>
+    <a href="#residence">Residence</a>
+    <a href="checkin.html">Check-in</a>
+    <a href="https://thecasascollection.holidayfuture.com/all-listings" target="_blank" rel="noopener">Book Direct</a>
+  </nav>
+  <div class="fmeta">230 NE 4th Street, Downtown Miami, FL · © 2026 The Casas Collection</div>
 </div></footer>
 
 <elevenlabs-convai agent-id="agent_6201kwmsmc0rerarvsyqwpr9qwwv"></elevenlabs-convai>
