@@ -1,0 +1,173 @@
+{
+    "name": "Ocean Breeze — Registration & Welcome",
+    "nodes": [
+        {
+            "id": "d41187c5-ad04-4a3f-8ede-c2c5fffa3db8",
+            "name": "Register Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+                240,
+                300
+            ],
+            "webhookId": "9ddcc5e4-81a4-4e09-b7ca-dc8373fdc8ed",
+            "parameters": {
+                "path": "concierge-register",
+                "options": {
+                    "allowedOrigins": "*"
+                },
+                "httpMethod": "POST",
+                "responseMode": "responseNode"
+            },
+            "typeVersion": 2.1
+        },
+        {
+            "id": "29fc61c8-6b70-419d-afa7-7eee947b783c",
+            "name": "Save Registration",
+            "type": "n8n-nodes-base.supabase",
+            "position": [
+                460,
+                300
+            ],
+            "parameters": {
+                "tableId": "concierge_registrations",
+                "fieldsUi": {
+                    "fieldValues": [
+                        {
+                            "fieldId": "tenant_id",
+                            "fieldValue": "ocean_breeze_studios"
+                        },
+                        {
+                            "fieldId": "full_name",
+                            "fieldValue": "={{ $json.body.full_name }}"
+                        },
+                        {
+                            "fieldId": "email",
+                            "fieldValue": "={{ $json.body.email }}"
+                        },
+                        {
+                            "fieldId": "phone",
+                            "fieldValue": "={{ $json.body.phone }}"
+                        },
+                        {
+                            "fieldId": "checkin",
+                            "fieldValue": "={{ $json.body.checkin }}"
+                        },
+                        {
+                            "fieldId": "checkout",
+                            "fieldValue": "={{ $json.body.checkout }}"
+                        },
+                        {
+                            "fieldId": "guests",
+                            "fieldValue": "={{ $json.body.guests }}"
+                        },
+                        {
+                            "fieldId": "room_pref",
+                            "fieldValue": "={{ $json.body.room_pref }}"
+                        },
+                        {
+                            "fieldId": "source",
+                            "fieldValue": "landing_form"
+                        },
+                        {
+                            "fieldId": "offer_stage",
+                            "fieldValue": "welcomed"
+                        }
+                    ]
+                },
+                "resource": "row",
+                "operation": "create",
+                "dataToSend": "defineBelow"
+            },
+            "credentials": {
+                "supabaseApi": {
+                    "id": "RZRQitiBz6NunbwL",
+                    "name": "Supabase MyScheduler"
+                }
+            },
+            "typeVersion": 1
+        },
+        {
+            "id": "13d4fc09-27b7-43d5-9735-5ca99d787092",
+            "name": "Respond OK",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "position": [
+                680,
+                300
+            ],
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ { \"ok\": true } }}"
+            },
+            "typeVersion": 1.5
+        },
+        {
+            "id": "28fd5a7b-066c-47fa-9078-5b4ac77846a5",
+            "name": "Welcome Email",
+            "type": "n8n-nodes-base.gmail",
+            "onError": "continueRegularOutput",
+            "position": [
+                900,
+                300
+            ],
+            "webhookId": "263d4293-5d1d-444a-a014-fb25011cd1cc",
+            "parameters": {
+                "sendTo": "={{ $(\"Register Webhook\").item.json.body.email }}",
+                "message": "=<!DOCTYPE html><html lang='es'><body style='margin:0;padding:0;background:#eef2f1;'><div style='display:none;max-height:0;overflow:hidden;color:#eef2f1;'>Tu mejor tarifa reservando directo, y un descuento para tu proxima estadia.</div><table role='presentation' width='100%' cellpadding='0' cellspacing='0' style='background:#eef2f1;padding:24px 0;'><tr><td align='center'><table role='presentation' width='600' cellpadding='0' cellspacing='0' style='width:600px;max-width:94%;background:#ffffff;border-radius:16px;overflow:hidden;font-family:Arial,Helvetica,sans-serif;'><tr><td style='background:#0a4d53;padding:22px 28px;'><div style='color:#ffffff;font-family:Georgia,serif;font-size:22px;font-weight:bold;'>Ocean Breeze Studios</div><div style='color:#9fd9d4;font-size:12px;margin-top:3px;'>Zona Colonial &middot; Santo Domingo</div></td></tr><tr><td><img src='https://images.unsplash.com/photo-1754027675944-0b0bbb20398e?fm=jpg&q=70&w=600&h=280&fit=crop' width='600' alt='Mar Caribe' style='display:block;width:100%;height:auto;'/></td></tr><tr><td style='padding:30px 30px 8px;'><h1 style='margin:0 0 10px;font-family:Georgia,serif;color:#0a4d53;font-size:23px;'>Hola {{ $('Register Webhook').item.json.body.full_name }}, bienvenido a casa.</h1><p style='margin:0 0 16px;color:#3c4a4b;font-size:15px;line-height:1.6;'>Gracias por registrarte con nosotros. Ocean Breeze Studios es tu hogar lejos de casa en el corazon de la Zona Colonial: estudios con cocina propia, recepcion 24/7 y todo a pasos de El Conde y del mar Caribe.</p></td></tr><tr><td style='padding:6px 30px 4px;'><table role='presentation' width='100%' cellpadding='0' cellspacing='0' style='background:#f3efe4;border:1px solid #e6dcc6;border-radius:12px;'><tr><td style='padding:18px 20px;'><div style='color:#0e6b73;font-weight:bold;font-size:15px;margin-bottom:8px;'>Reserva directo y ahorra</div><p style='margin:0 0 8px;color:#3c4a4b;font-size:14px;line-height:1.55;'>Reservando directamente con nosotros te damos <b>una mejor tarifa</b> por tu estadia.</p><p style='margin:0;color:#3c4a4b;font-size:14px;line-height:1.55;'>Y como gracias, te guardamos un <b>descuento para tu proxima estadia</b> cada vez que reservas directo con nosotros.</p></td></tr></table></td></tr><tr><td style='padding:22px 30px 6px;' align='center'><a href='https://wa.me/18096850193' style='display:inline-block;background:#0e6b73;color:#ffffff;text-decoration:none;font-weight:bold;font-size:15px;padding:13px 26px;border-radius:999px;'>Reservar por WhatsApp</a></td></tr><tr><td style='padding:6px 30px 4px;' align='center'><p style='margin:0;color:#6b7878;font-size:13px;'>O responde a este correo con tus fechas y te confirmamos al mejor precio.</p></td></tr><tr><td style='padding:18px 30px 0;'><img src='https://images.pexels.com/photos/29152637/pexels-photo-29152637.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop' width='540' alt='Zona Colonial' style='display:block;width:100%;height:auto;border-radius:12px;'/><p style='margin:10px 0 0;color:#6b7878;font-size:13px;line-height:1.5;text-align:center;'>A pasos de tu estudio: la primera catedral de America, El Conde y el Alcazar de Colon.</p></td></tr><tr><td style='padding:24px 30px 28px;'><hr style='border:none;border-top:1px solid #e4e8e7;margin:0 0 16px;'/><div style='color:#0a4d53;font-weight:bold;font-size:14px;'>Ocean Breeze Studios</div><p style='margin:6px 0 0;color:#7c8888;font-size:12px;line-height:1.6;'>Calle Palo Hincado 202, Zona Colonial, Santo Domingo<br/>WhatsApp / Tel: (809) 685-0193 &middot; oceanbreezestudios@gmail.com</p></td></tr></table></td></tr></table></body></html>",
+                "options": {
+                    "senderName": "Ocean Breeze Studios",
+                    "appendAttribution": false
+                },
+                "subject": "Bienvenido a Ocean Breeze Studios — tu mejor tarifa, directo",
+                "resource": "message",
+                "emailType": "html",
+                "operation": "send"
+            },
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "WAOY1EO0MCIlFcZq",
+                    "name": "andrewtry002@gmail.com"
+                }
+            },
+            "typeVersion": 2.1
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "Respond OK": {
+            "main": [
+                [
+                    {
+                        "node": "Welcome Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Register Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Save Registration",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Registration": {
+            "main": [
+                [
+                    {
+                        "node": "Respond OK",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
