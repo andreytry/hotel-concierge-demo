@@ -1,0 +1,90 @@
+{
+    "name": "Casas Registration Email",
+    "nodes": [
+        {
+            "id": "58c7e992-71a4-490f-b560-e0a693153615",
+            "name": "In",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+                220,
+                300
+            ],
+            "webhookId": "8c8fa18c-d5a6-4c87-9e3d-6cf931d5154f",
+            "parameters": {
+                "path": "casas-register",
+                "httpMethod": "POST",
+                "responseMode": "lastNode"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "f3702cff-76d7-4a04-b143-5ed6a0811cdc",
+            "name": "Build",
+            "type": "n8n-nodes-base.code",
+            "position": [
+                440,
+                300
+            ],
+            "parameters": {
+                "mode": "runOnceForAllItems",
+                "jsCode": "\nconst b=$input.first().json.body||{};\nconst p=b.parameters||b||{};\nconst email=((p.email||'')+'').trim();\nconst name=(p.name||p.full_name||'there');\nconst KEY='<JWT_REDACTED>';\nif(!email){ return [{json:{to:'',subject:'',html:''}}]; }\ntry{ await this.helpers.httpRequest({method:'POST',url:'https://zkylrolpuwybsksspblj.supabase.co/rest/v1/casas_subscribers',headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},body:{email:email,name:name,source:'registration'},json:true}); }catch(e){}\nlet tpl=''; try{ tpl=await this.helpers.httpRequest({method:'GET',url:'https://andreytry.github.io/hotel-concierge-demo/newsletter.html'}); }catch(e){ tpl=''; }\nif(typeof tpl!=='string'){ tpl=String(tpl); }\nfunction row(t,d,last){ const bd=last?'':'border-bottom:1px solid rgba(10,22,38,.12);'; return '<tr><td style=\"padding:14px 0;'+bd+'\"><div style=\"font-family:Georgia,serif;font-size:19px;color:#0a1626;\">'+t+'</div><div style=\"font-size:13.5px;color:#6f7789;margin-top:3px;\">'+d+'</div></td></tr>'; }\nconst first=((name||'there')+'').split(' ')[0];\nconst welcomeRows=row('Your 10% direct rate is ready','Book any apartment direct with us and save — no platform fees, ever.',false)+row('Steps from Bayside and the bay','Downtown Miami, a three-minute walk to the marina.',false)+row('A concierge on hand','Ask us anything, any hour, in English or Spanish.',true);\nconst newsRows=row('World Cup quarter-final in Miami','Sat July 11 at Hard Rock Stadium — the city is buzzing.',false)+row('Third-place final, July 18','The last Miami match of the tournament, at Hard Rock Stadium.',false)+row('Free Fan Festival at Bayfront Park','Every match on big screens, a short walk from your door.',true);\nconst welcomeHtml=tpl.split('{{first_name}}').join(first).split('{{events_html}}').join(welcomeRows);\nconst newsHtml=tpl.split('{{first_name}}').join(first).split('{{events_html}}').join(newsRows);\nreturn [\n {json:{to:email,subject:'Welcome to The Casas Collection — your direct rate inside',html:welcomeHtml}},\n {json:{to:email,subject:\"What's on in Miami this week — The Casas Collection\",html:newsHtml}}\n];\n"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "e353870b-a603-4d54-b850-cfd742ed151e",
+            "name": "Send",
+            "type": "n8n-nodes-base.gmail",
+            "position": [
+                660,
+                300
+            ],
+            "webhookId": "a6082726-2432-4414-bd19-5eff66d477e2",
+            "parameters": {
+                "sendTo": "={{ $json.to }}",
+                "message": "={{ $json.html }}",
+                "options": {
+                },
+                "subject": "={{ $json.subject }}",
+                "resource": "message",
+                "emailType": "html",
+                "operation": "send"
+            },
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "WAOY1EO0MCIlFcZq",
+                    "name": "andrewtry002@gmail.com"
+                }
+            },
+            "typeVersion": 2.1
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "In": {
+            "main": [
+                [
+                    {
+                        "node": "Build",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Build": {
+            "main": [
+                [
+                    {
+                        "node": "Send",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
