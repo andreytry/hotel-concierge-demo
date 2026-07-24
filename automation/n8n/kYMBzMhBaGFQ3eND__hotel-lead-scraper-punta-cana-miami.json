@@ -1,0 +1,399 @@
+{
+    "name": "Hotel Lead Scraper - Punta Cana & Miami",
+    "nodes": [
+        {
+            "id": "96bb008e-97f7-4253-92a6-637220957f3e",
+            "name": "Run Scrape",
+            "type": "n8n-nodes-base.manualTrigger",
+            "position": [
+                0,
+                300
+            ],
+            "parameters": {
+            },
+            "typeVersion": 1
+        },
+        {
+            "id": "2d317bb0-a322-456f-8420-a75df6cba224",
+            "name": "Build Search Tasks",
+            "type": "n8n-nodes-base.code",
+            "position": [
+                220,
+                300
+            ],
+            "parameters": {
+                "jsCode": "const pagesPerMarket = 3;\nconst markets = [\n  { market: \"Punta Cana\", location: \"Punta Cana, Dominican Republic\", city: \"Punta Cana\", country: \"Dominican Republic\" },\n  { market: \"Miami\", location: \"Miami, Florida, United States\", city: \"Miami\", country: \"United States\" }\n];\nconst tasks = [];\nfor (const m of markets) {\n  for (let p = 1; p <= pagesPerMarket; p++) {\n    tasks.push({ json: { market: m.market, location: m.location, city: m.city, country: m.country, page: p } });\n  }\n}\nreturn tasks;"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "dbcb1ea3-93c7-4a0e-8963-da0687673170",
+            "name": "Done",
+            "type": "n8n-nodes-base.set",
+            "position": [
+                720,
+                460
+            ],
+            "parameters": {
+                "mode": "manual",
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "s1",
+                            "name": "status",
+                            "type": "string",
+                            "value": "Scrape complete"
+                        },
+                        {
+                            "id": "s2",
+                            "name": "finished_at",
+                            "type": "string",
+                            "value": "={{ $now.toISO() }}"
+                        }
+                    ]
+                },
+                "includeOtherFields": false
+            },
+            "typeVersion": 3.4
+        },
+        {
+            "id": "e3979474-a4df-4378-9cc2-b2789d435ee2",
+            "name": "Apollo People Search",
+            "type": "n8n-nodes-base.httpRequest",
+            "position": [
+                720,
+                200
+            ],
+            "parameters": {
+                "url": "https://api.apollo.io/api/v1/mixed_people/search",
+                "method": "POST",
+                "jsonBody": "={\n  \"person_titles\": [\"owner\",\"founder\",\"co-founder\",\"ceo\",\"president\",\"general manager\",\"managing director\",\"director of operations\",\"director of sales\",\"commercial director\",\"director of revenue\",\"revenue manager\",\"marketing director\",\"propietario\",\"gerente general\",\"director general\"],\n  \"person_locations\": [\"{{ $json.location }}\"],\n  \"organization_num_employees_ranges\": [\"1,10\",\"11,50\",\"51,200\"],\n  \"page\": {{ $json.page }},\n  \"per_page\": 100\n}",
+                "sendBody": true,
+                "sendHeaders": true,
+                "specifyBody": "json",
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "X-Api-Key",
+                            "value": "<__PLACEHOLDER_VALUE__Paste your Apollo API key__>"
+                        }
+                    ]
+                }
+            },
+            "retryOnFail": true,
+            "typeVersion": 4.2
+        },
+        {
+            "id": "c6896974-8601-4355-bef5-d64619a90e00",
+            "name": "Throttle",
+            "type": "n8n-nodes-base.wait",
+            "position": [
+                940,
+                200
+            ],
+            "webhookId": "be7835b2-1638-408e-937e-9f282f245bd1",
+            "parameters": {
+                "unit": "seconds",
+                "amount": 1
+            },
+            "typeVersion": 1.1
+        },
+        {
+            "id": "bcebece3-7df9-41ac-bd6f-3569c5b79542",
+            "name": "Split People",
+            "type": "n8n-nodes-base.splitOut",
+            "position": [
+                1160,
+                200
+            ],
+            "parameters": {
+                "include": "noOtherFields",
+                "fieldToSplitOut": "people"
+            },
+            "typeVersion": 1
+        },
+        {
+            "id": "4bc8e2f5-9abd-4e6d-8a56-0a2324ed8bb5",
+            "name": "Apollo Reveal Contact",
+            "type": "n8n-nodes-base.httpRequest",
+            "position": [
+                1380,
+                200
+            ],
+            "parameters": {
+                "url": "https://api.apollo.io/api/v1/people/match",
+                "method": "POST",
+                "jsonBody": "={ \"id\": \"{{ $json.id }}\", \"reveal_personal_emails\": true }",
+                "sendBody": true,
+                "sendHeaders": true,
+                "specifyBody": "json",
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "Content-Type",
+                            "value": "application/json"
+                        },
+                        {
+                            "name": "X-Api-Key",
+                            "value": "<__PLACEHOLDER_VALUE__Paste your Apollo API key (same key)__>"
+                        }
+                    ]
+                }
+            },
+            "retryOnFail": true,
+            "typeVersion": 4.2
+        },
+        {
+            "id": "cd36986d-baf8-4aae-b27a-85e609404f0d",
+            "name": "Lead Row",
+            "type": "n8n-nodes-base.set",
+            "position": [
+                1600,
+                200
+            ],
+            "parameters": {
+                "mode": "manual",
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "a1",
+                            "name": "hotel_name",
+                            "type": "string",
+                            "value": "={{ $json.person.organization?.name }}"
+                        },
+                        {
+                            "id": "a2",
+                            "name": "contact_name",
+                            "type": "string",
+                            "value": "={{ $json.person.name }}"
+                        },
+                        {
+                            "id": "a3",
+                            "name": "title",
+                            "type": "string",
+                            "value": "={{ $json.person.title }}"
+                        },
+                        {
+                            "id": "a4",
+                            "name": "email",
+                            "type": "string",
+                            "value": "={{ $json.person.email }}"
+                        },
+                        {
+                            "id": "a5",
+                            "name": "email_status",
+                            "type": "string",
+                            "value": "={{ $json.person.email_status }}"
+                        },
+                        {
+                            "id": "a6",
+                            "name": "phone",
+                            "type": "string",
+                            "value": "={{ $json.person.organization?.phone ?? $json.person.phone_numbers?.[0]?.raw_number }}"
+                        },
+                        {
+                            "id": "a7",
+                            "name": "market",
+                            "type": "string",
+                            "value": "={{ $('Loop Tasks').item.json.market }}"
+                        },
+                        {
+                            "id": "a8",
+                            "name": "city",
+                            "type": "string",
+                            "value": "={{ $json.person.city ?? $('Loop Tasks').item.json.city }}"
+                        },
+                        {
+                            "id": "a9",
+                            "name": "country",
+                            "type": "string",
+                            "value": "={{ $json.person.country ?? $('Loop Tasks').item.json.country }}"
+                        },
+                        {
+                            "id": "a10",
+                            "name": "company_website",
+                            "type": "string",
+                            "value": "={{ $json.person.organization?.website_url }}"
+                        },
+                        {
+                            "id": "a11",
+                            "name": "linkedin_url",
+                            "type": "string",
+                            "value": "={{ $json.person.linkedin_url }}"
+                        },
+                        {
+                            "id": "a12",
+                            "name": "num_employees",
+                            "type": "number",
+                            "value": "={{ $json.person.organization?.estimated_num_employees }}"
+                        },
+                        {
+                            "id": "a13",
+                            "name": "apollo_person_id",
+                            "type": "string",
+                            "value": "={{ $json.person.id }}"
+                        },
+                        {
+                            "id": "a14",
+                            "name": "enriched_at",
+                            "type": "string",
+                            "value": "={{ $now.toISO() }}"
+                        }
+                    ]
+                },
+                "includeOtherFields": false
+            },
+            "typeVersion": 3.4
+        },
+        {
+            "id": "4e199dc4-e0f3-430f-88e3-2b77742087fd",
+            "name": "Loop Tasks",
+            "type": "n8n-nodes-base.splitInBatches",
+            "position": [
+                460,
+                300
+            ],
+            "parameters": {
+                "batchSize": 1
+            },
+            "typeVersion": 3
+        },
+        {
+            "id": "df06936f-5864-4ff3-bfa7-ece9817af187",
+            "name": "Sticky Note 69307ea2",
+            "type": "n8n-nodes-base.stickyNote",
+            "position": [
+                1550,
+                150
+            ],
+            "parameters": {
+                "color": 4,
+                "width": 300,
+                "height": 200,
+                "content": "## Connect your sink here\nEach item leaving \"Lead Row\" is one clean hotel decision-maker contact.\nDrop an n8n Data Table / Airtable / Supabase node between \"Lead Row\" and the loop-back to persist them, then export CSV for Joshua."
+            },
+            "typeVersion": 1
+        },
+        {
+            "id": "27717ce8-b0d6-44fa-86c1-2820a07a79bb",
+            "name": "Sticky Note fde48d19",
+            "type": "n8n-nodes-base.stickyNote",
+            "position": [
+                670,
+                150
+            ],
+            "parameters": {
+                "color": 3,
+                "width": 300,
+                "height": 200,
+                "content": "## Setup\n1. Paste your Apollo API key into BOTH HTTP nodes (X-Api-Key header).\n2. Edit pagesPerMarket in \"Build Search Tasks\" to control volume (3 pages x 100 = ~300 rows/market).\n3. To restrict strictly to hotels, add Apollo Industry = Hospitality filter in the search body using YOUR account industry tag id (do not guess it)."
+            },
+            "typeVersion": 1
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "Lead Row": {
+            "main": [
+                [
+                    {
+                        "node": "Loop Tasks",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Throttle": {
+            "main": [
+                [
+                    {
+                        "node": "Split People",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Loop Tasks": {
+            "main": [
+                [
+                    {
+                        "node": "Done",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Apollo People Search",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Run Scrape": {
+            "main": [
+                [
+                    {
+                        "node": "Build Search Tasks",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split People": {
+            "main": [
+                [
+                    {
+                        "node": "Apollo Reveal Contact",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Build Search Tasks": {
+            "main": [
+                [
+                    {
+                        "node": "Loop Tasks",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Apollo People Search": {
+            "main": [
+                [
+                    {
+                        "node": "Throttle",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Apollo Reveal Contact": {
+            "main": [
+                [
+                    {
+                        "node": "Lead Row",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
