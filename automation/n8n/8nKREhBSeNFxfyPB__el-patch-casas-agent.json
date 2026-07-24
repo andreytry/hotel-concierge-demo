@@ -1,0 +1,71 @@
+{
+    "name": "EL Patch Casas Agent",
+    "nodes": [
+        {
+            "id": "61c966f9-c5a8-4fae-95ac-4459abe72b87",
+            "name": "Go",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+                240,
+                300
+            ],
+            "webhookId": "7887420a-1bc2-454f-a529-c7c7dad326c1",
+            "parameters": {
+                "path": "el-patch-casas",
+                "httpMethod": "POST",
+                "responseMode": "lastNode"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "6575e771-bfc3-4f04-9c4d-a942a7b47d7c",
+            "name": "Patch",
+            "type": "n8n-nodes-base.httpRequest",
+            "position": [
+                460,
+                300
+            ],
+            "parameters": {
+                "url": "https://api.elevenlabs.io/v1/convai/agents/agent_6201kwmsmc0rerarvsyqwpr9qwwv",
+                "method": "PATCH",
+                "options": {
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                },
+                "jsonBody": "{\"conversation_config\":{\"tts\":{\"voice_id\":\"21m00Tcm4TlvDq8ikWAM\",\"model_id\":\"eleven_turbo_v2\"},\"agent\":{\"language\":\"en\",\"prompt\":{\"built_in_tools\":{\"language_detection\":{\"name\":\"language_detection\",\"description\":\"Detect the caller's language at the start of the call and speak only that language. Default to English; switch to Spanish only if the caller clearly speaks Spanish.\"}}}},\"language_presets\":{\"es\":{\"overrides\":{\"agent\":{\"first_message\":\"¡Hola! Bienvenido a The Casas Collection. ¿En qué puedo ayudarte?\"}}}}}}",
+                "sendBody": true,
+                "sendHeaders": true,
+                "specifyBody": "json",
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "xi-api-key",
+                            "value": "<ELEVENLABS_KEY>"
+                        }
+                    ]
+                }
+            },
+            "typeVersion": 4.4
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "Go": {
+            "main": [
+                [
+                    {
+                        "node": "Patch",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
