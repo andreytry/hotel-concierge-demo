@@ -1,0 +1,77 @@
+{
+    "name": "Casas Availability (voice tool)",
+    "nodes": [
+        {
+            "id": "2c3b835a-51bd-420c-9960-f385ed597f14",
+            "name": "In",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+                220,
+                300
+            ],
+            "webhookId": "9c8bac89-fc66-4f70-a290-d8abf05160b7",
+            "parameters": {
+                "path": "casas-availability",
+                "httpMethod": "POST",
+                "responseMode": "responseNode"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "1543c11a-660d-40ee-be19-025af0d487ec",
+            "name": "Check",
+            "type": "n8n-nodes-base.code",
+            "position": [
+                440,
+                300
+            ],
+            "parameters": {
+                "mode": "runOnceForAllItems",
+                "jsCode": "\nconst b = $input.first().json.body || {};\nconst p = b.parameters || b || {};\nconst KEY = '<JWT_REDACTED>';\nconst rates = {solea:149, athena:139, marina:135, luna:129, aurora:119};\nfunction pick(n){ n=(n||'').toLowerCase(); for (const k in rates){ if(n.indexOf(k)>=0) return {rate:rates[k],key:k}; } return {rate:129,key:'luna'}; }\nconst pr = pick(p.property);\nconst propName = 'Casa ' + pr.key.charAt(0).toUpperCase() + pr.key.slice(1);\nfunction ymd(d){ return d.toISOString().slice(0,10); }\nfunction addDays(s,n){ const d=new Date(s+'T12:00:00Z'); d.setUTCDate(d.getUTCDate()+n); return ymd(d); }\nfunction isDate(s){ return typeof s==='string' && s.length===10 && s.charAt(4)==='-' && s.charAt(7)==='-'; }\nconst today = ymd(new Date());\nlet ci = isDate(p.check_in) ? p.check_in : today;\nlet nights = parseInt(p.nights);\nlet co = isDate(p.check_out) ? p.check_out : addDays(ci, (nights>0?nights:1));\nnights = Math.max(1, Math.round((new Date(co)-new Date(ci))/86400000));\nconst cleaning=99; const subtotal=pr.rate*nights; const total=subtotal+cleaning;\nconst base='https://zkylrolpuwybsksspblj.supabase.co/rest/v1/casas_bookings';\nconst url = base + '?property=eq.' + encodeURIComponent(propName) + '&status=neq.cancelled&check_in=lt.' + co + '&check_out=gt.' + ci + '&select=id';\nlet rows=[];\ntry{ rows = await this.helpers.httpRequest({ method:'GET', url, headers:{ apikey:KEY, Authorization:'Bearer '+KEY }, json:true }); }catch(e){ rows = []; }\nconst available = Array.isArray(rows) ? rows.length===0 : true;\nlet result;\nif(available){ result = propName + ' is available from ' + ci + ' to ' + co + ' (' + nights + ' night' + (nights>1?'s':'') + ') at $' + pr.rate + ' per night. With the one-time $' + cleaning + ' cleaning fee, the total is $' + total + '. Would you like me to hold it? I just need your name and an email or phone.'; }\nelse { result = 'I am sorry, ' + propName + ' is not available for ' + ci + ' to ' + co + '. I can check other dates or another apartment - Casa Solea, Casa Athena, Casa Marina, Casa Luna or Casa Aurora.'; }\nreturn [{ json: { result, available, property:propName, check_in:ci, check_out:co, nights, nightly:pr.rate, cleaning, total } }];\n"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "6cd56ee2-e00f-4840-93fe-cdce4aeb8cab",
+            "name": "Respond",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "position": [
+                660,
+                300
+            ],
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ JSON.stringify({ result: $json.result }) }}"
+            },
+            "typeVersion": 1.1
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "In": {
+            "main": [
+                [
+                    {
+                        "node": "Check",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check": {
+            "main": [
+                [
+                    {
+                        "node": "Respond",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
