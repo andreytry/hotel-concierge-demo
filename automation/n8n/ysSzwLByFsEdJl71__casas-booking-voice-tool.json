@@ -1,0 +1,77 @@
+{
+    "name": "Casas Booking (voice tool)",
+    "nodes": [
+        {
+            "id": "3c8b0242-59e5-4ea8-9b92-31ba4e220a46",
+            "name": "In",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+                220,
+                300
+            ],
+            "webhookId": "5d969267-397e-4ec8-9e2a-47bc225c1273",
+            "parameters": {
+                "path": "casas-book",
+                "httpMethod": "POST",
+                "responseMode": "responseNode"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "89068508-faf3-4f06-899e-17a1eb3a17f2",
+            "name": "Book",
+            "type": "n8n-nodes-base.code",
+            "position": [
+                440,
+                300
+            ],
+            "parameters": {
+                "mode": "runOnceForAllItems",
+                "jsCode": "\nconst b = $input.first().json.body || {};\nconst p = b.parameters || b || {};\nconst KEY = '<JWT_REDACTED>';\nconst rates = {solea:149, athena:139, marina:135, luna:129, aurora:119};\nfunction pick(n){ n=(n||'').toLowerCase(); for (const k in rates){ if(n.indexOf(k)>=0) return {rate:rates[k],key:k}; } return {rate:129,key:'luna'}; }\nconst pr = pick(p.property);\nconst propName = 'Casa ' + pr.key.charAt(0).toUpperCase() + pr.key.slice(1);\nfunction ymd(d){ return d.toISOString().slice(0,10); }\nfunction addDays(s,n){ const d=new Date(s+'T12:00:00Z'); d.setUTCDate(d.getUTCDate()+n); return ymd(d); }\nfunction isDate(s){ return typeof s==='string' && s.length===10 && s.charAt(4)==='-' && s.charAt(7)==='-'; }\nconst today = ymd(new Date());\nlet ci = isDate(p.check_in) ? p.check_in : today;\nlet nights = parseInt(p.nights);\nlet co = isDate(p.check_out) ? p.check_out : addDays(ci, (nights>0?nights:1));\nnights = Math.max(1, Math.round((new Date(co)-new Date(ci))/86400000));\nconst cleaning=99; const total=pr.rate*nights+cleaning;\nconst guests = parseInt(p.guests)||2;\nconst guest_name = (p.guest_name || p.name || 'Guest');\nconst contact = (p.contact || p.email || p.phone || '');\nconst base='https://zkylrolpuwybsksspblj.supabase.co/rest/v1/casas_bookings';\nconst H = { apikey:KEY, Authorization:'Bearer '+KEY, 'Content-Type':'application/json' };\nlet rows=[];\ntry{ rows = await this.helpers.httpRequest({ method:'GET', url: base + '?property=eq.' + encodeURIComponent(propName) + '&status=neq.cancelled&check_in=lt.' + co + '&check_out=gt.' + ci + '&select=id', headers:H, json:true }); }catch(e){ rows=[]; }\nif(Array.isArray(rows) && rows.length>0){ return [{ json:{ result: propName + ' just became unavailable for those dates. Shall I check other dates or another apartment?' } }]; }\nconst ref = 'CC-' + Math.random().toString(36).slice(2,7).toUpperCase();\ntry{ await this.helpers.httpRequest({ method:'POST', url: base, headers: Object.assign({ Prefer:'return=minimal' }, H), body: { ref, property:propName, check_in:ci, check_out:co, nights, guests, nightly_usd:pr.rate, total_usd:total, guest_name, contact, status:'held' }, json:true }); }catch(e){}\nconst link = 'https://andreytry.github.io/hotel-concierge-demo/book.html?ref=' + ref + '&p=' + encodeURIComponent(propName) + '&in=' + ci + '&out=' + co + '&g=' + guests + '&rate=' + pr.rate + '&total=' + total + '&name=' + encodeURIComponent(guest_name);\nconst result = 'All set! I have held ' + propName + ' for ' + guest_name + ', ' + ci + ' to ' + co + ', ' + nights + ' night' + (nights>1?'s':'') + ', total $' + total + '. Your reference is ' + ref + '. I have put your confirmation link in the chat - open it to confirm and pay: ' + link;\nreturn [{ json: { result, link, ref } }];\n"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "00c8d5c5-cd0d-46b8-a2ee-733c0048ba66",
+            "name": "Respond",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "position": [
+                660,
+                300
+            ],
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ JSON.stringify({ result: $json.result }) }}"
+            },
+            "typeVersion": 1.1
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "In": {
+            "main": [
+                [
+                    {
+                        "node": "Book",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Book": {
+            "main": [
+                [
+                    {
+                        "node": "Respond",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
