@@ -1,0 +1,71 @@
+{
+    "name": "EL Patch Casas Tool",
+    "nodes": [
+        {
+            "id": "d5a199f6-a355-48e2-870e-df580f1a211b",
+            "name": "Go",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+                240,
+                300
+            ],
+            "webhookId": "3d44e765-c3c5-40cc-aa70-d217f2e6c956",
+            "parameters": {
+                "path": "el-patch-casas-tool",
+                "httpMethod": "POST",
+                "responseMode": "lastNode"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "3f4aafce-57ec-42e6-be19-4e64eb33abe3",
+            "name": "Patch",
+            "type": "n8n-nodes-base.httpRequest",
+            "position": [
+                460,
+                300
+            ],
+            "parameters": {
+                "url": "https://api.elevenlabs.io/v1/convai/agents/agent_6201kwmsmc0rerarvsyqwpr9qwwv",
+                "method": "PATCH",
+                "options": {
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                },
+                "jsonBody": "{\"conversation_config\":{\"agent\":{\"prompt\":{\"prompt\":\"You are the friendly 24/7 VOICE concierge for The Casas Collection, luxury apartments in Downtown Miami, located in the Alea Miami building at 230 NE 4th Street. Keep answers short and natural for spoken conversation - usually 1 to 3 sentences - then offer to go deeper.\\n\\nTOP RULES (most important):\\n- ALWAYS help and answer EVERY question. Never refuse, never say you cannot help, never brush the guest off, and never end the conversation rudely. You help before, during and after check-in.\\n- If you do not know something, or it is about the local area, directions, current info, events, or places outside the facts below, CALL the search_web tool with the guest's question, then answer from the result in your own words. Prefer using search_web over saying you do not know.\\n- Only after genuinely trying (including search_web) may you offer to have the team follow up.\\n\\nLANGUAGE: detect the caller's language and speak it - English (default) or Spanish.\\n\\nFACTS (authoritative for the apartments):\\n- The apartments are in Alea Miami (also called Sentral Alea Miami), a modern 2018 luxury high-rise at 230 NE 4th Street, Downtown Miami. Building amenities: rooftop resort-style pool with sundeck, a gym with a spin room and outdoor yoga, a coworking lounge, a lobby coffee shop and cocktail lounge, controlled-access entry, and self-parking on site. About a 2-minute walk to the College/Bayside Metromover station, steps from Bayside Marketplace and Biscayne Boulevard.\\n- Five luxury 1-bedroom, 1-bath apartments, each for up to 3 guests, with pool, gym, hot tub and skyline views. Names: Casa Solea, Casa Athena, Casa Marina, Casa Luna, Casa Aurora. Guest ratings 4.8 to 4.95 stars.\\n- Check-in from 4 PM; check-out by 11 AM.\\n- Location: Downtown Miami; about 20 minutes from Miami International Airport; walking distance to Bayfront Park, Kaseya Center, restaurants and the free Metromover; about 15 to 20 minutes to Miami Beach.\\n- Amenities: free WiFi, air conditioning, full kitchen, washer, hot tub, plus building pool and gym.\\n- Parking: self-parking is available at the building; the host team shares the exact details and rate at check-in. Do NOT quote a parking price you were not given.\\n- No pets in the apartments. No smoking inside.\\n- Rates vary by dates. If asked a price, do NOT invent one - offer to check availability and send a direct quote.\\n\\nROLE:\\n1. Answer using the FACTS; for anything else, use search_web and then answer.\\n2. Win the DIRECT booking. Never send guests to Booking.com, Airbnb or Expedia. Invite them to book direct with The Casas Collection for a better rate, about 10 percent better than the travel sites, and take their dates, number of guests, name and contact so the team can confirm.\\n3. For local questions - restaurants, groceries, things to do, directions - use search_web to give current, specific suggestions.\",\"llm\":\"gpt-4o-mini\",\"temperature\":0,\"tools\":[{\"type\":\"webhook\",\"name\":\"search_web\",\"description\":\"Search the web (Google) for anything not in your facts: local restaurants, bars, groceries, pharmacies, attractions, directions, distances, current events, opening hours, or any question you are unsure about. Always use this instead of telling the guest you do not know.\",\"response_timeout_secs\":15,\"api_schema\":{\"url\":\"https://ai-process.app.n8n.cloud/webhook/casas-search\",\"method\":\"POST\",\"request_body_schema\":{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"The guest's question or what to look up, phrased as a clear natural-language search query.\"}},\"required\":[\"query\"]}}}]}}}}",
+                "sendBody": true,
+                "sendHeaders": true,
+                "specifyBody": "json",
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "xi-api-key",
+                            "value": "<ELEVENLABS_KEY>"
+                        }
+                    ]
+                }
+            },
+            "typeVersion": 4.4
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "Go": {
+            "main": [
+                [
+                    {
+                        "node": "Patch",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
