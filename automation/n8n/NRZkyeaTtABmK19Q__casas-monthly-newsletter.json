@@ -1,0 +1,121 @@
+{
+    "name": "Casas Monthly Newsletter",
+    "nodes": [
+        {
+            "id": "cb80cab6-1338-4ad2-87cd-af1656836bee",
+            "name": "Monthly",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "position": [
+                220,
+                300
+            ],
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "cronExpression",
+                            "expression": "0 9 1 * *"
+                        }
+                    ]
+                }
+            },
+            "typeVersion": 1.2
+        },
+        {
+            "id": "d7c44287-0216-4ce2-b3d5-7d630663dc64",
+            "name": "Build Emails",
+            "type": "n8n-nodes-base.code",
+            "position": [
+                440,
+                300
+            ],
+            "parameters": {
+                "mode": "runOnceForAllItems",
+                "jsCode": "\nconst KEY='<JWT_REDACTED>';\nconst subsUrl='https://zkylrolpuwybsksspblj.supabase.co/rest/v1/casas_subscribers?select=email,name';\nlet subs=[];\ntry{ subs = await this.helpers.httpRequest({ method:'GET', url:subsUrl, headers:{apikey:KEY,Authorization:'Bearer '+KEY}, json:true }); }catch(e){ subs=[]; }\nlet tpl='';\ntry{ tpl = await this.helpers.httpRequest({ method:'GET', url:'https://andreytry.github.io/hotel-concierge-demo/newsletter.html' }); }catch(e){ tpl=''; }\nif(typeof tpl!=='string'){ tpl=String(tpl); }\nconst out=[];\nfor(const s of (Array.isArray(subs)?subs:[])){\n  if(!s || !s.email) continue;\n  const first=((s.name||'there')+'').split(' ')[0];\n  const html=tpl.split('{{first_name}}').join(first);\n  out.push({ json:{ to:s.email, first:first, subject:'Your monthly note from The Casas Collection', html:html } });\n}\nif(out.length===0){ out.push({ json:{ to:'andrewtry002@gmail.com', first:'there', subject:'Your monthly note from The Casas Collection', html:'<p>Newsletter</p>' } }); }\nreturn out;\n"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "a9c9bd3a-1ed4-40b5-aeb2-e1d2f453e207",
+            "name": "Send",
+            "type": "n8n-nodes-base.gmail",
+            "position": [
+                660,
+                300
+            ],
+            "webhookId": "62bb40ad-8826-4d7e-88ac-4bb2b3b5ed2f",
+            "parameters": {
+                "sendTo": "={{ $json.to }}",
+                "message": "={{ $json.html }}",
+                "options": {
+                },
+                "subject": "={{ $json.subject }}",
+                "resource": "message",
+                "emailType": "html",
+                "operation": "send"
+            },
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "WAOY1EO0MCIlFcZq",
+                    "name": "andrewtry002@gmail.com"
+                }
+            },
+            "typeVersion": 2.1
+        },
+        {
+            "id": "5c45ab39-9f9d-4fc3-b00d-dad3014c00bd",
+            "name": "Test Now",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+                220,
+                460
+            ],
+            "webhookId": "c8b02992-713e-4fa6-91a1-60b82d0711b1",
+            "parameters": {
+                "path": "casas-newsletter-test",
+                "httpMethod": "POST",
+                "responseMode": "lastNode"
+            },
+            "typeVersion": 2
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "Monthly": {
+            "main": [
+                [
+                    {
+                        "node": "Build Emails",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Test Now": {
+            "main": [
+                [
+                    {
+                        "node": "Build Emails",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Build Emails": {
+            "main": [
+                [
+                    {
+                        "node": "Send",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
