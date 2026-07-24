@@ -1,0 +1,102 @@
+{
+    "name": "Surroundings Search (Gemini)",
+    "nodes": [
+        {
+            "id": "31799aee-dc3f-44c8-94d4-bfaa2bdd358c",
+            "name": "When Called",
+            "type": "n8n-nodes-base.executeWorkflowTrigger",
+            "position": [
+                240,
+                300
+            ],
+            "parameters": {
+                "inputSource": "workflowInputs",
+                "workflowInputs": {
+                    "values": [
+                        {
+                            "name": "query",
+                            "type": "string"
+                        }
+                    ]
+                }
+            },
+            "typeVersion": 1.2
+        },
+        {
+            "id": "3e466fbc-2bad-4b9b-9219-310043d3ebd1",
+            "name": "Gemini Search",
+            "type": "n8n-nodes-base.httpRequest",
+            "position": [
+                460,
+                300
+            ],
+            "parameters": {
+                "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyBgy0UWp2oEid5m5HJqwx7J1q9XL2D2WJ0",
+                "method": "POST",
+                "options": {
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                },
+                "jsonBody": "={{ JSON.stringify({ contents:[{parts:[{text:\"You are helping a hotel guest in Santo Domingo, Dominican Republic. Give a brief, current, factual answer with names and approximate distances where useful. Question: \" + ($json.query ?? \"\")}]}], tools:[{google_search:{}}] }) }}",
+                "sendBody": true,
+                "specifyBody": "json"
+            },
+            "typeVersion": 4.4
+        },
+        {
+            "id": "9981e4c8-f75b-4e62-9fec-ef785ef90a61",
+            "name": "Extract",
+            "type": "n8n-nodes-base.set",
+            "position": [
+                680,
+                300
+            ],
+            "parameters": {
+                "mode": "manual",
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "r1",
+                            "name": "response",
+                            "type": "string",
+                            "value": "={{ ($json.candidates?.[0]?.content?.parts ?? []).map(p => p.text).filter(Boolean).join(\" \") || \"No local info found.\" }}"
+                        }
+                    ]
+                },
+                "includeOtherFields": false
+            },
+            "typeVersion": 3.4
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "When Called": {
+            "main": [
+                [
+                    {
+                        "node": "Gemini Search",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Gemini Search": {
+            "main": [
+                [
+                    {
+                        "node": "Extract",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
