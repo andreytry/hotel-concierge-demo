@@ -1,0 +1,137 @@
+{
+    "name": "Casas Web Search (voice tool)",
+    "nodes": [
+        {
+            "id": "a3045f4f-597e-4000-98e7-f442a4d69c54",
+            "name": "In",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+                220,
+                300
+            ],
+            "webhookId": "0bcb69ef-ab1b-4a30-a4de-927c2279f89d",
+            "parameters": {
+                "path": "casas-search",
+                "httpMethod": "POST",
+                "responseMode": "responseNode"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "e9244f2c-a407-45a5-a80d-ac754eef993b",
+            "name": "Build",
+            "type": "n8n-nodes-base.code",
+            "position": [
+                420,
+                300
+            ],
+            "parameters": {
+                "mode": "runOnceForAllItems",
+                "jsCode": "const b = $json.body || {};\nconst q = (b.parameters && b.parameters.query) || b.query || (b.parameters && b.parameters.q) || 'Miami';\nconst prompt = 'You are helping a guest of The Casas Collection, luxury apartments at Alea Miami, 230 NE 4th Street, Downtown Miami. Answer the guest question concisely and factually for a short spoken reply (1 to 3 sentences), with current info, names and approximate distances where useful. Question: ' + q;\nconst body = JSON.stringify({ contents:[{parts:[{text:prompt}]}], tools:[{google_search:{}}], generationConfig:{temperature:0.3} });\nreturn [{ json: { geminiBody: body, q: q } }];"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "4c1c5d4c-bf67-4f28-b03a-73c8abdab43d",
+            "name": "Gemini",
+            "type": "n8n-nodes-base.httpRequest",
+            "position": [
+                620,
+                300
+            ],
+            "parameters": {
+                "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyBgy0UWp2oEid5m5HJqwx7J1q9XL2D2WJ0",
+                "method": "POST",
+                "options": {
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                },
+                "jsonBody": "={{ $json.geminiBody }}",
+                "sendBody": true,
+                "specifyBody": "json"
+            },
+            "typeVersion": 4.4
+        },
+        {
+            "id": "fa121d78-a559-4f0f-b23c-31397045fef8",
+            "name": "Extract",
+            "type": "n8n-nodes-base.code",
+            "position": [
+                820,
+                300
+            ],
+            "parameters": {
+                "mode": "runOnceForAllItems",
+                "jsCode": "const c = $json.candidates || [];\nconst parts = (c[0] && c[0].content && c[0].content.parts) || [];\nconst text = parts.map(function(p){return p.text;}).filter(Boolean).join(' ').trim();\nreturn [{ json: { result: text || 'I could not find that at the moment, but our team can follow up for you.' } }];"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "09b23c8e-44c3-4abc-a4e4-303fc16d93d4",
+            "name": "Respond",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "position": [
+                1020,
+                300
+            ],
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ JSON.stringify({ result: $json.result }) }}"
+            },
+            "typeVersion": 1.1
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "In": {
+            "main": [
+                [
+                    {
+                        "node": "Build",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Build": {
+            "main": [
+                [
+                    {
+                        "node": "Gemini",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Gemini": {
+            "main": [
+                [
+                    {
+                        "node": "Extract",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract": {
+            "main": [
+                [
+                    {
+                        "node": "Respond",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
