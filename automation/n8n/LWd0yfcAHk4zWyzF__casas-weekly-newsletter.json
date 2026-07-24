@@ -1,0 +1,121 @@
+{
+    "name": "Casas Weekly Newsletter",
+    "nodes": [
+        {
+            "id": "4929ad3b-a3aa-4cdb-a706-ccb0502ee4a0",
+            "name": "Weekly",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "position": [
+                220,
+                300
+            ],
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "cronExpression",
+                            "expression": "0 9 * * 1"
+                        }
+                    ]
+                }
+            },
+            "typeVersion": 1.2
+        },
+        {
+            "id": "61ac4e30-b4ab-4401-8d1c-f3d1cfd22f33",
+            "name": "Build Emails",
+            "type": "n8n-nodes-base.code",
+            "position": [
+                460,
+                380
+            ],
+            "parameters": {
+                "mode": "runOnceForAllItems",
+                "jsCode": "\nconst KEY='<JWT_REDACTED>';\nconst GKEY='AIzaSyBgy0UWp2oEid5m5HJqwx7J1q9XL2D2WJ0';\nconst NL=String.fromCharCode(10);\nlet subs=[]; try{ subs=await this.helpers.httpRequest({method:'GET',url:'https://zkylrolpuwybsksspblj.supabase.co/rest/v1/casas_subscribers?select=email,name',headers:{apikey:KEY,Authorization:'Bearer '+KEY},json:true}); }catch(e){ subs=[]; }\nlet tpl=''; try{ tpl=await this.helpers.httpRequest({method:'GET',url:'https://andreytry.github.io/hotel-concierge-demo/newsletter.html'}); }catch(e){ tpl=''; }\nif(typeof tpl!=='string'){ tpl=String(tpl); }\nlet eventsText='';\ntry{\n  const gbody={ contents:[{parts:[{text:'Give exactly 3 short items of what is happening in Miami, Florida this week (events, sports such as the FIFA World Cup at Hard Rock Stadium, festivals, notable things to do). Format each item on its own line as: Title | one short sentence. No preamble, no numbering, no markdown.'}]}], tools:[{google_search:{}}], generationConfig:{temperature:0.4} };\n  const gr=await this.helpers.httpRequest({method:'POST',url:'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+GKEY,body:gbody,json:true});\n  const parts=(gr && gr.candidates && gr.candidates[0] && gr.candidates[0].content && gr.candidates[0].content.parts)||[];\n  eventsText=parts.map(function(p){return p.text;}).filter(Boolean).join(' ');\n}catch(e){ eventsText=''; }\nfunction row(title,desc,last){ const b= last? '' : 'border-bottom:1px solid rgba(10,22,38,.12);'; return '<tr><td style=\"padding:14px 0;'+b+'\"><div style=\"font-family:Georgia,serif;font-size:19px;color:#0a1626;\">'+title+'</div><div style=\"font-size:13.5px;color:#6f7789;margin-top:3px;\">'+desc+'</div></td></tr>'; }\nlet rows='';\nconst lines=(eventsText||'').split(NL).map(function(x){return x.trim();}).filter(function(x){return x.indexOf('|')>0;});\nif(lines.length>0){ const use=lines.slice(0,3); use.forEach(function(l,i){ const pp=l.split('|'); rows+=row(pp[0].trim(), (pp[1]||'').trim(), i===use.length-1); }); }\nelse { rows=row('The FIFA World Cup is in town','Matches at Hard Rock Stadium, about 11 miles from your door.',false)+row('Sunset at Bayfront Park','A three-minute walk away, best just before eight.',false)+row('A day across the causeway','South Beach is fifteen minutes away.',true); }\nconst out=[];\nfor(const s of (Array.isArray(subs)?subs:[])){ if(!s||!s.email) continue; const first=((s.name||'there')+'').split(' ')[0]; let html=tpl.split('{{first_name}}').join(first).split('{{events_html}}').join(rows); out.push({json:{to:s.email,first:first,subject:'Your weekly note from The Casas Collection',html:html}}); }\nif(out.length===0){ out.push({json:{to:'andrewtry002@gmail.com',first:'there',subject:'Your weekly note from The Casas Collection',html:tpl.split('{{events_html}}').join(rows)}}); }\nreturn out;\n"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "cd1bd51a-880e-4a36-949e-d1fc9183770a",
+            "name": "Send",
+            "type": "n8n-nodes-base.gmail",
+            "position": [
+                680,
+                380
+            ],
+            "webhookId": "d5dbeb37-cf0b-45ab-8d2a-76bc72b3181f",
+            "parameters": {
+                "sendTo": "={{ $json.to }}",
+                "message": "={{ $json.html }}",
+                "options": {
+                },
+                "subject": "={{ $json.subject }}",
+                "resource": "message",
+                "emailType": "html",
+                "operation": "send"
+            },
+            "credentials": {
+                "gmailOAuth2": {
+                    "id": "WAOY1EO0MCIlFcZq",
+                    "name": "andrewtry002@gmail.com"
+                }
+            },
+            "typeVersion": 2.1
+        },
+        {
+            "id": "c942dc85-b2bc-4d94-8df6-59100202ef83",
+            "name": "Test Now",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+                220,
+                460
+            ],
+            "webhookId": "78742239-fff2-4692-a6b8-3a426721aa77",
+            "parameters": {
+                "path": "casas-newsletter-run",
+                "httpMethod": "POST",
+                "responseMode": "lastNode"
+            },
+            "typeVersion": 2
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "Weekly": {
+            "main": [
+                [
+                    {
+                        "node": "Build Emails",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Test Now": {
+            "main": [
+                [
+                    {
+                        "node": "Build Emails",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Build Emails": {
+            "main": [
+                [
+                    {
+                        "node": "Send",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
