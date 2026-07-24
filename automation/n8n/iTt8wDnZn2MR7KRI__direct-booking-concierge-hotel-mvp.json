@@ -1,0 +1,570 @@
+{
+    "name": "Direct Booking Concierge — Hotel MVP",
+    "nodes": [
+        {
+            "id": "5a329113-7d8c-4867-b54f-9ef666fba325",
+            "name": "Inbound Message",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+                240,
+                300
+            ],
+            "webhookId": "9d7b217f-5b12-46da-8d7e-9498c63192d1",
+            "parameters": {
+                "path": "concierge",
+                "options": {
+                    "allowedOrigins": "*"
+                },
+                "httpMethod": "POST",
+                "responseMode": "responseNode"
+            },
+            "typeVersion": 2.1
+        },
+        {
+            "id": "d8afb99f-3ce7-4d2f-af4d-3c276c3f6796",
+            "name": "Normalize Message",
+            "type": "n8n-nodes-base.set",
+            "position": [
+                460,
+                300
+            ],
+            "parameters": {
+                "mode": "manual",
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "a1",
+                            "name": "guest_contact",
+                            "type": "string",
+                            "value": "={{ ($json.body?.From ?? $json.From ?? $json.body?.from ?? $json.from ?? \"\").toString().replace(\"whatsapp:\",\"\") }}"
+                        },
+                        {
+                            "id": "a2",
+                            "name": "tenant_whatsapp",
+                            "type": "string",
+                            "value": "={{ (($json.body?.From ?? $json.From ?? \"\").toString().includes(\"whatsapp\")) ? \"+18096850193\" : (($json.body?.To ?? $json.To ?? $json.body?.to ?? $json.to ?? \"\").toString().replace(\"whatsapp:\",\"\")) }}"
+                        },
+                        {
+                            "id": "a3",
+                            "name": "message",
+                            "type": "string",
+                            "value": "={{ $json.body?.Body ?? $json.Body ?? $json.body?.message ?? $json.message ?? \"\" }}"
+                        },
+                        {
+                            "id": "a4",
+                            "name": "channel",
+                            "type": "string",
+                            "value": "={{ ($json.body?.From ?? $json.From ?? \"\").toString().includes(\"whatsapp\") ? \"whatsapp\" : \"web\" }}"
+                        }
+                    ]
+                },
+                "includeOtherFields": false
+            },
+            "typeVersion": 3.4
+        },
+        {
+            "id": "17b58ec9-efcb-4db9-bd32-d56cb558c4e8",
+            "name": "Get Tenant Config",
+            "type": "n8n-nodes-base.supabase",
+            "position": [
+                680,
+                300
+            ],
+            "parameters": {
+                "limit": 1,
+                "filters": {
+                    "conditions": [
+                        {
+                            "keyName": "whatsapp_number",
+                            "keyValue": "={{ $json.tenant_whatsapp }}",
+                            "condition": "eq"
+                        }
+                    ]
+                },
+                "tableId": "concierge_tenants",
+                "resource": "row",
+                "matchType": "allFilters",
+                "operation": "getAll",
+                "returnAll": false,
+                "filterType": "manual"
+            },
+            "credentials": {
+                "supabaseApi": {
+                    "id": "RZRQitiBz6NunbwL",
+                    "name": "Supabase MyScheduler"
+                }
+            },
+            "typeVersion": 1
+        },
+        {
+            "id": "6e2f1723-29f3-4c7a-b1cd-19c84d2ca152",
+            "name": "AI Concierge",
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "onError": "continueRegularOutput",
+            "position": [
+                1040,
+                300
+            ],
+            "parameters": {
+                "text": "={{ $(\"Normalize Message\").item.json.message }}",
+                "options": {
+                    "systemMessage": "=You are the 24/7 concierge for {{ $(\"Get Tenant Config\").item.json.hotel_name }}.\n\nLANGUAGE — STRICT: Detect the language of the guest's latest message and reply ONLY in that language (Spanish->Spanish, English->English, French->French). Never mix languages, never translate.\n\nHOTEL FACTS (authoritative):\n{{ JSON.stringify($(\"Get Tenant Config\").item.json.facts) }}\n\nROOMS and USD NIGHTLY RATES:\n{{ JSON.stringify($(\"Get Tenant Config\").item.json.rooms) }}\n\nDIRECT-BOOKING POLICY:\n{{ JSON.stringify($(\"Get Tenant Config\").item.json.direct_booking) }}\n\nHOW TO REPLY:\n- For questions about the HOTEL itself (amenities, parking, pool, restaurant, wifi, check-in and check-out, breakfast, pets, transport, accessibility, prices), answer from the FACTS above.\n- For questions about the SURROUNDINGS or local area (nearby restaurants, bars, beaches, pharmacies, supermarkets, attractions, distances, how to get somewhere, what to do, opening hours), call the Search Surroundings tool to get current info, then answer concisely in the guest's language.\n- ALWAYS be helpful, never dead-end. If still unsure, give a brief sensible answer and offer to confirm with reception. Keep the conversation moving.\n- PITCH REGULARLY (every couple of replies, naturally, not pushy): invite them to stay direct — for example: If you would like to stay with us, we can offer you a special price; you just complete a short registration. Adapt it to their language.\n- For bookings: never send them to Booking.com or Expedia. Collect room type, check-in and check-out dates, number of guests, and name plus contact. Quote nightly rate times nights, apply the book_direct_discount_pct as the direct perk and mention it. Tell them the front desk will confirm.\n\nReply directly to the guest as plain conversational text. Do NOT output JSON, code, or field names. Write entirely in the guest's language."
+                },
+                "promptType": "define",
+                "hasOutputParser": false
+            },
+            "typeVersion": 3.1
+        },
+        {
+            "id": "434a0278-c235-41f6-a87f-c08c2d711510",
+            "name": "GPT-4o",
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "position": [
+                820,
+                520
+            ],
+            "parameters": {
+                "model": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "gpt-4o"
+                }
+            },
+            "credentials": {
+                "openAiApi": {
+                    "id": "FvPJm03Y9MaN0nwP",
+                    "name": "OpenAi account"
+                }
+            },
+            "typeVersion": 1.3
+        },
+        {
+            "id": "b061abac-d349-4b06-85b2-ef00bdd5b419",
+            "name": "Booking Parser",
+            "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+            "position": [
+                1000,
+                520
+            ],
+            "parameters": {
+                "autoFix": true,
+                "schemaType": "fromJson",
+                "jsonSchemaExample": "{\"intent\":\"faq\",\"language\":\"en\",\"reply\":\"...\",\"booking_ready\":false,\"guest_name\":\"\",\"room_type\":\"\",\"checkin\":\"\",\"checkout\":\"\",\"guests\":0,\"quoted_usd\":0,\"source\":\"direct\"}"
+            },
+            "typeVersion": 1.3
+        },
+        {
+            "id": "565882ef-cd95-4f55-a6b4-c13ee2be9052",
+            "name": "Reply To Guest",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "position": [
+                1280,
+                300
+            ],
+            "parameters": {
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Content-Type",
+                                "value": "={{ $(\"Normalize Message\").item.json.channel === \"whatsapp\" ? \"text/xml\" : \"application/json\" }}"
+                            }
+                        ]
+                    }
+                },
+                "respondWith": "text",
+                "responseBody": "={{ $('Normalize Message').item.json.channel === 'whatsapp' ? ('<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>' + ($('Gemini Concierge').item.json.candidates?.[0]?.content?.parts?.[0]?.text ?? '¡Gracias por tu mensaje! ¿En qué puedo ayudarte: habitaciones, precios, piscina, parqueo o reservas?').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</Message></Response>') : JSON.stringify({ reply: ($('Gemini Concierge').item.json.candidates?.[0]?.content?.parts?.[0]?.text ?? '¡Gracias por tu mensaje!') }) }}"
+            },
+            "typeVersion": 1.5
+        },
+        {
+            "id": "9dc9baea-099c-4f72-9213-f13dbb2876d2",
+            "name": "Log Conversation",
+            "type": "n8n-nodes-base.supabase",
+            "position": [
+                1280,
+                480
+            ],
+            "parameters": {
+                "tableId": "concierge_message_log",
+                "fieldsUi": {
+                    "fieldValues": [
+                        {
+                            "fieldId": "tenant_id",
+                            "fieldValue": "={{ $(\"Get Tenant Config\").item.json.tenant_id }}"
+                        },
+                        {
+                            "fieldId": "channel",
+                            "fieldValue": "={{ $(\"Normalize Message\").item.json.channel }}"
+                        },
+                        {
+                            "fieldId": "direction",
+                            "fieldValue": "outbound"
+                        },
+                        {
+                            "fieldId": "guest_contact",
+                            "fieldValue": "={{ $(\"Normalize Message\").item.json.guest_contact }}"
+                        },
+                        {
+                            "fieldId": "language",
+                            "fieldValue": "={{ $(\"AI Concierge\").item.json.output?.language ?? $(\"AI Concierge\").item.json.language }}"
+                        },
+                        {
+                            "fieldId": "intent",
+                            "fieldValue": "={{ $(\"AI Concierge\").item.json.output?.intent ?? $(\"AI Concierge\").item.json.intent }}"
+                        },
+                        {
+                            "fieldId": "model",
+                            "fieldValue": "gpt-4o"
+                        },
+                        {
+                            "fieldId": "message",
+                            "fieldValue": "={{ $(\"AI Concierge\").item.json.output?.reply ?? $(\"AI Concierge\").item.json.reply }}"
+                        }
+                    ]
+                },
+                "resource": "row",
+                "operation": "create",
+                "dataToSend": "defineBelow"
+            },
+            "credentials": {
+                "supabaseApi": {
+                    "id": "RZRQitiBz6NunbwL",
+                    "name": "Supabase MyScheduler"
+                }
+            },
+            "typeVersion": 1
+        },
+        {
+            "id": "1e1c0582-1cef-4d38-bd32-97d2aa1ea3e7",
+            "name": "Booking Ready?",
+            "type": "n8n-nodes-base.if",
+            "position": [
+                1520,
+                300
+            ],
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "leftValue": "",
+                        "caseSensitive": true,
+                        "typeValidation": "loose"
+                    },
+                    "combinator": "and",
+                    "conditions": [
+                        {
+                            "operator": {
+                                "type": "boolean",
+                                "operation": "true",
+                                "singleValue": true
+                            },
+                            "leftValue": "={{ $(\"AI Concierge\").item.json.output?.booking_ready ?? $(\"AI Concierge\").item.json.booking_ready }}",
+                            "rightValue": ""
+                        }
+                    ]
+                }
+            },
+            "typeVersion": 2.2
+        },
+        {
+            "id": "248aa5e9-9101-496e-a540-6ec623725f5d",
+            "name": "Capture Direct Booking",
+            "type": "n8n-nodes-base.supabase",
+            "position": [
+                1760,
+                180
+            ],
+            "parameters": {
+                "tableId": "concierge_bookings",
+                "fieldsUi": {
+                    "fieldValues": [
+                        {
+                            "fieldId": "tenant_id",
+                            "fieldValue": "={{ $(\"Get Tenant Config\").item.json.tenant_id }}"
+                        },
+                        {
+                            "fieldId": "guest_name",
+                            "fieldValue": "={{ $(\"AI Concierge\").item.json.output?.guest_name ?? $(\"AI Concierge\").item.json.guest_name }}"
+                        },
+                        {
+                            "fieldId": "guest_contact",
+                            "fieldValue": "={{ $(\"Normalize Message\").item.json.guest_contact }}"
+                        },
+                        {
+                            "fieldId": "channel",
+                            "fieldValue": "={{ $(\"Normalize Message\").item.json.channel }}"
+                        },
+                        {
+                            "fieldId": "room_type",
+                            "fieldValue": "={{ $(\"AI Concierge\").item.json.output?.room_type ?? $(\"AI Concierge\").item.json.room_type }}"
+                        },
+                        {
+                            "fieldId": "checkin",
+                            "fieldValue": "={{ $(\"AI Concierge\").item.json.output?.checkin ?? $(\"AI Concierge\").item.json.checkin }}"
+                        },
+                        {
+                            "fieldId": "checkout",
+                            "fieldValue": "={{ $(\"AI Concierge\").item.json.output?.checkout ?? $(\"AI Concierge\").item.json.checkout }}"
+                        },
+                        {
+                            "fieldId": "guests",
+                            "fieldValue": "={{ $(\"AI Concierge\").item.json.output?.guests ?? $(\"AI Concierge\").item.json.guests }}"
+                        },
+                        {
+                            "fieldId": "quoted_usd",
+                            "fieldValue": "={{ $(\"AI Concierge\").item.json.output?.quoted_usd ?? $(\"AI Concierge\").item.json.quoted_usd }}"
+                        },
+                        {
+                            "fieldId": "status",
+                            "fieldValue": "pending"
+                        }
+                    ]
+                },
+                "resource": "row",
+                "operation": "create",
+                "dataToSend": "defineBelow"
+            },
+            "credentials": {
+                "supabaseApi": {
+                    "id": "RZRQitiBz6NunbwL",
+                    "name": "Supabase MyScheduler"
+                }
+            },
+            "typeVersion": 1
+        },
+        {
+            "id": "278113ba-3c2b-4f60-a0a7-ca2754583c53",
+            "name": "Notify Front Desk",
+            "type": "n8n-nodes-base.twilio",
+            "onError": "continueRegularOutput",
+            "position": [
+                1980,
+                180
+            ],
+            "parameters": {
+                "to": "={{ $(\"Get Tenant Config\").item.json.direct_booking.front_desk_notify }}",
+                "from": "={{ $(\"Normalize Message\").item.json.tenant_whatsapp }}",
+                "message": "=New DIRECT booking request:\n{{ $(\"AI Concierge\").item.json.output?.guest_name ?? \"\" }} ({{ $(\"Normalize Message\").item.json.guest_contact }})\n{{ $(\"AI Concierge\").item.json.output?.room_type ?? \"\" }} | {{ $(\"AI Concierge\").item.json.output?.checkin ?? \"\" }} to {{ $(\"AI Concierge\").item.json.output?.checkout ?? \"\" }} | {{ $(\"AI Concierge\").item.json.output?.guests ?? \"\" }} guests | approx USD {{ $(\"AI Concierge\").item.json.output?.quoted_usd ?? \"\" }}",
+                "resource": "sms",
+                "operation": "send",
+                "toWhatsapp": true
+            },
+            "credentials": {
+                "twilioApi": {
+                    "id": "hiOkbAKi2rkktdrh",
+                    "name": "Twilio account"
+                }
+            },
+            "typeVersion": 1
+        },
+        {
+            "id": "eb331ccb-56ff-41f4-ae52-43d5e2b88e9b",
+            "name": "Search Surroundings",
+            "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+            "position": [
+                1040,
+                540
+            ],
+            "parameters": {
+                "source": "database",
+                "workflowId": {
+                    "__rl": true,
+                    "mode": "id",
+                    "value": "fBBEmTp9Cvb2nB3r"
+                },
+                "description": "Search the web for up-to-date local information about the area AROUND the hotel: nearby restaurants, bars, beaches, pharmacies, supermarkets, attractions, distances, directions, what to do, opening hours. Use ONLY for questions about the surroundings or local area, NOT about the hotel itself.",
+                "workflowInputs": {
+                    "value": {
+                        "query": "={{ $json.query }}"
+                    },
+                    "schema": [
+                        {
+                            "id": "query",
+                            "type": "string",
+                            "display": true,
+                            "required": false,
+                            "displayName": "query",
+                            "defaultMatch": false,
+                            "canBeUsedToMatch": true
+                        }
+                    ],
+                    "mappingMode": "defineBelow",
+                    "matchingColumns": [
+                    ]
+                }
+            },
+            "typeVersion": 2.2
+        },
+        {
+            "id": "6a386c6d-f38f-40f4-be97-810d336458fb",
+            "name": "Gemini Concierge",
+            "type": "n8n-nodes-base.httpRequest",
+            "onError": "continueRegularOutput",
+            "position": [
+                1040,
+                140
+            ],
+            "parameters": {
+                "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyBgy0UWp2oEid5m5HJqwx7J1q9XL2D2WJ0",
+                "method": "POST",
+                "options": {
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                },
+                "jsonBody": "={{ $json.geminiBody }}",
+                "sendBody": true,
+                "specifyBody": "json"
+            },
+            "typeVersion": 4.4
+        },
+        {
+            "id": "347202fc-30ed-4545-ab9f-780ef7522f2d",
+            "name": "Build Gemini Request",
+            "type": "n8n-nodes-base.code",
+            "position": [
+                840,
+                140
+            ],
+            "parameters": {
+                "mode": "runOnceForAllItems",
+                "jsCode": "const t = $('Get Tenant Config').first().json;\nconst msg = ($('Normalize Message').first().json.message) || 'Hola';\nconst prompt = 'You are the 24/7 concierge for ' + t.hotel_name + '. LANGUAGE RULE: detect the language of the guest message and reply ONLY in that language (Spanish, English or French); never mix languages. HOTEL/PROPERTY FACTS: ' + JSON.stringify(t.facts) + '. ROOMS / PROPERTIES (USD per night; 0 or missing means quote on request): ' + JSON.stringify(t.rooms) + '. DIRECT BOOKING: ' + JSON.stringify(t.direct_booking) + '. INSTRUCTIONS: For questions about the property, answer from FACTS. For questions about the SURROUNDINGS or local area (nearby restaurants, bars, beaches, pharmacies, supermarkets, attractions, distances, directions, what to do, opening hours), use Google Search to give current specific info with names and approximate distances. Never dead-end; always be helpful. If a nightly rate is unknown, do NOT invent one: offer to check availability for their dates and send a direct quote. Pitch regularly and naturally: invite them to book direct with us for a better price than online travel sites (no platform commission), via a short registration. For bookings, never mention Booking.com or Expedia as a place to book; collect property, dates, guests, name and contact, and say the team will confirm. Reply as plain conversational text in the guest language only; do not output JSON or code.';\nconst body = JSON.stringify({ system_instruction: { parts: [{ text: prompt }] }, contents: [{ role: 'user', parts: [{ text: msg }] }], tools: [{ google_search: {} }], generationConfig: { temperature: 0.4 } });\nreturn [{ json: { geminiBody: body } }];"
+            },
+            "typeVersion": 2
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "GPT-4o": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "AI Concierge",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    },
+                    {
+                        "node": "Booking Parser",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Booking Parser": {
+            "ai_outputParser": [
+                [
+                    {
+                        "node": "AI Concierge",
+                        "type": "ai_outputParser",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Booking Ready?": {
+            "main": [
+                [
+                    {
+                        "node": "Capture Direct Booking",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Inbound Message": {
+            "main": [
+                [
+                    {
+                        "node": "Normalize Message",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Gemini Concierge": {
+            "main": [
+                [
+                    {
+                        "node": "Reply To Guest",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Log Conversation": {
+            "main": [
+                [
+                    {
+                        "node": "Booking Ready?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Tenant Config": {
+            "main": [
+                [
+                    {
+                        "node": "Build Gemini Request",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Normalize Message": {
+            "main": [
+                [
+                    {
+                        "node": "Get Tenant Config",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Search Surroundings": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "AI Concierge",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Build Gemini Request": {
+            "main": [
+                [
+                    {
+                        "node": "Gemini Concierge",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Capture Direct Booking": {
+            "main": [
+                [
+                    {
+                        "node": "Notify Front Desk",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
