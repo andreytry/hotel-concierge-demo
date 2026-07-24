@@ -1,0 +1,86 @@
+{
+    "name": "Hotel BOC — concierge webhook prod test",
+    "nodes": [
+        {
+            "id": "992621df-0ee9-4ebb-a640-c8698cbe1e6a",
+            "name": "Start",
+            "type": "n8n-nodes-base.manualTrigger",
+            "position": [
+                0,
+                0
+            ],
+            "parameters": {
+            },
+            "typeVersion": 1
+        },
+        {
+            "id": "a1ca762f-3b36-4f69-a820-479c886475fb",
+            "name": "Post Concierge",
+            "type": "n8n-nodes-base.httpRequest",
+            "position": [
+                224,
+                0
+            ],
+            "parameters": {
+                "url": "https://ai-process.app.n8n.cloud/webhook/concierge",
+                "method": "POST",
+                "options": {
+                    "timeout": 40000,
+                    "response": {
+                        "response": {
+                            "neverError": true,
+                            "fullResponse": true
+                        }
+                    }
+                },
+                "jsonBody": "={{ JSON.stringify({ channel:\"web\", message:\"Hello, do you have a room for two nights?\", session_id:\"prodtest-001\" }) }}",
+                "sendBody": true,
+                "contentType": "json",
+                "specifyBody": "json"
+            },
+            "typeVersion": 4.4
+        },
+        {
+            "id": "1003876c-fc8b-45c7-95dd-27d0f40902d9",
+            "name": "Out",
+            "type": "n8n-nodes-base.code",
+            "position": [
+                448,
+                0
+            ],
+            "parameters": {
+                "mode": "runOnceForAllItems",
+                "jsCode": "\nvar r = $json; var b = (r.body!==undefined? r.body : r);\nvar clen = (r.headers && r.headers['content-length']) ? r.headers['content-length'] : null;\nreturn [{ json: { http_status:(r.statusCode!==undefined?r.statusCode:null), content_length: clen, body_empty:(JSON.stringify(b)===\"{}\"||b===\"\"||b===null), response: b } }];\n"
+            },
+            "typeVersion": 2
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Post Concierge",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Post Concierge": {
+            "main": [
+                [
+                    {
+                        "node": "Out",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
