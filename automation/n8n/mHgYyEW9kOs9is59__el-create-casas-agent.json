@@ -1,0 +1,71 @@
+{
+    "name": "EL Create Casas Agent",
+    "nodes": [
+        {
+            "id": "98fe3cf8-e529-431f-bdf5-2fd5edb9be15",
+            "name": "Go",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+                240,
+                300
+            ],
+            "webhookId": "8da3b6e2-aa6d-418f-a8cb-5c5cfcb65bcd",
+            "parameters": {
+                "path": "el-create-casas",
+                "httpMethod": "POST",
+                "responseMode": "lastNode"
+            },
+            "typeVersion": 2
+        },
+        {
+            "id": "d66877c7-174d-42df-b895-8706f0b99272",
+            "name": "Create",
+            "type": "n8n-nodes-base.httpRequest",
+            "position": [
+                460,
+                300
+            ],
+            "parameters": {
+                "url": "https://api.elevenlabs.io/v1/convai/agents/create",
+                "method": "POST",
+                "options": {
+                    "response": {
+                        "response": {
+                            "neverError": true
+                        }
+                    }
+                },
+                "jsonBody": "{\"name\":\"The Casas Collection — Concierge (Voice)\",\"conversation_config\":{\"asr\":{\"quality\":\"high\",\"provider\":\"scribe_realtime\",\"user_input_audio_format\":\"pcm_16000\"},\"turn\":{\"turn_timeout\":7,\"mode\":\"turn\"},\"tts\":{\"model_id\":\"eleven_turbo_v2_5\",\"voice_id\":\"21m00Tcm4TlvDq8ikWAM\",\"stability\":0.5,\"speed\":1,\"similarity_boost\":0.8,\"agent_output_audio_format\":\"pcm_16000\"},\"conversation\":{\"text_only\":false,\"max_duration_seconds\":600},\"agent\":{\"language\":\"en\",\"first_message\":\"Hi! Welcome to The Casas Collection - luxury apartments in Downtown Miami. I can tell you about our places, the neighborhood, or help you book direct for a better rate than the travel sites. You can talk to me in English or Spanish. How can I help?\",\"prompt\":{\"llm\":\"gpt-4o-mini\",\"temperature\":0,\"prompt\":\"You are the friendly 24/7 VOICE concierge for The Casas Collection, a group of luxury high-rise apartments in Downtown Miami. Keep answers short and natural for spoken conversation - usually 1 to 3 sentences - then offer to go deeper.\\n\\nLANGUAGE: detect the caller's language and speak it - English (default) or Spanish.\\n\\nFACTS (authoritative - never invent beyond these):\\n- Five luxury 1-bedroom, 1-bath apartments, each for up to 3 guests, in Downtown Miami high-rises with swimming pool, gym, hot tub and skyline views. Names: Casa Solea, Casa Athena, Casa Marina, Casa Luna, Casa Aurora. Guest ratings 4.8 to 4.95 stars.\\n- Check-in from 4 PM; check-out by 11 AM.\\n- Location: Downtown Miami. About 6.8 miles, roughly 20 minutes, from Miami International Airport. A 3-minute walk to Bayside Marketplace; walking distance to Bayfront Park, Kaseya Center, restaurants and the free Metromover; about 15 to 20 minutes to Miami Beach.\\n- Amenities: free WiFi, air conditioning, full kitchen, washer, hot tub, pool, gym, skyline views.\\n- Parking: available at nearby garages or valet; the host team shares the exact garage and current rate at check-in. Do NOT quote a parking price you were not given.\\n- No pets. No smoking inside.\\n- Rates vary by dates. If asked a price, do NOT invent one - offer to check availability and send a direct quote.\\n\\nROLE:\\n1. Answer questions using the FACTS, briefly and warmly, like a great front-desk host.\\n2. Win the DIRECT booking. Never send guests to Booking.com, Airbnb or Expedia. Invite them to book direct with The Casas Collection for a better rate - about 10 percent better than the travel sites - and take their dates, number of guests, name and contact so the team can confirm.\\n3. For local questions like restaurants, groceries or things to do, give helpful nearby suggestions such as Bayside Marketplace, Brickell, Whole Foods and Miami Beach.\"}}}}",
+                "sendBody": true,
+                "sendHeaders": true,
+                "specifyBody": "json",
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "xi-api-key",
+                            "value": "<ELEVENLABS_KEY>"
+                        }
+                    ]
+                }
+            },
+            "typeVersion": 4.4
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "Go": {
+            "main": [
+                [
+                    {
+                        "node": "Create",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
