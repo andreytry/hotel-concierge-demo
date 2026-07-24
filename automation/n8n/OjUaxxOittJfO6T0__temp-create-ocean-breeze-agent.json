@@ -1,0 +1,73 @@
+{
+    "name": "TEMP — Create Ocean Breeze Agent",
+    "nodes": [
+        {
+            "id": "8599351d-57e7-4490-b803-46af96e7e9eb",
+            "name": "Go",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+                240,
+                300
+            ],
+            "webhookId": "aa2c5e1f-68d8-4754-b6c0-3bd7a9290511",
+            "parameters": {
+                "path": "create-ob-agent",
+                "httpMethod": "POST",
+                "responseMode": "lastNode"
+            },
+            "typeVersion": 2.1
+        },
+        {
+            "id": "443edf35-51e0-48cb-8025-36c21d08c65d",
+            "name": "Create Agent",
+            "type": "n8n-nodes-base.httpRequest",
+            "position": [
+                480,
+                300
+            ],
+            "parameters": {
+                "url": "https://api.elevenlabs.io/v1/convai/whatsapp-accounts",
+                "method": "GET",
+                "options": {
+                    "response": {
+                        "response": {
+                            "neverError": true,
+                            "fullResponse": true
+                        }
+                    }
+                },
+                "jsonBody": "={{ {} }}",
+                "sendBody": false,
+                "contentType": "json",
+                "sendHeaders": true,
+                "specifyBody": "json",
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "xi-api-key",
+                            "value": "<ELEVENLABS_KEY>"
+                        }
+                    ]
+                }
+            },
+            "typeVersion": 4.4
+        }
+    ],
+    "settings": {
+        "availableInMCP": true,
+        "executionOrder": "v1"
+    },
+    "connections": {
+        "Go": {
+            "main": [
+                [
+                    {
+                        "node": "Create Agent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
